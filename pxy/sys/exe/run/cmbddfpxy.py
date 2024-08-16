@@ -11,24 +11,24 @@ logging = Logger(30, dir_path + "main.log")
 
 def get_holdingsinfo(resp_list):
     try:
-        if resp_list:
+        if resp_list:  # Check if the response list is not empty
             df = pd.DataFrame(resp_list)
             df['source'] = 'holdings'
-            return df
         else:
-            return pd.DataFrame()  # Return empty DataFrame if no data
+            df = pd.DataFrame()  # Return an empty DataFrame if no data
+        return df
     except Exception as e:
         print(f"An error occurred in holdings: {e}")
         return pd.DataFrame()
 
 def get_positionsinfo(resp_list):
     try:
-        if resp_list:
+        if resp_list:  # Check if the response list is not empty
             df = pd.DataFrame(resp_list)
             df['source'] = 'positions'
-            return df
         else:
-            return pd.DataFrame()  # Return empty DataFrame if no data
+            df = pd.DataFrame()  # Return an empty DataFrame if no data
+        return df
     except Exception as e:
         print(f"An error occurred in positions: {e}")
         return pd.DataFrame()
@@ -42,7 +42,6 @@ except Exception as e:
     logging.error(f"{str(e)} unable to get holdings")
     sys.exit(1)
 finally:
-    # Ensure to close the file and restore stdout
     if sys.stdout != sys.__stdout__:
         sys.stdout.close()
         sys.stdout = sys.__stdout__
@@ -50,13 +49,17 @@ finally:
 def process_data():
     try:
         holdings_response = broker.kite.holdings()
-        positions_response = broker.kite.positions()['net']
-
+        positions_response = broker.kite.positions().get('net', [])
+        
         holdings_df = get_holdingsinfo(holdings_response)
         positions_df = get_positionsinfo(positions_response)
 
         holdings_df.to_csv('pxyholdings.csv', index=False)
         positions_df.to_csv('pxypositions.csv', index=False)
+
+        if holdings_df.empty and positions_df.empty:
+            print("Both holdings and positions DataFrames are empty.")
+            return None
 
         if not holdings_df.empty:
             holdings_df['key'] = holdings_df['exchange'] + ":" + holdings_df['tradingsymbol']
@@ -69,11 +72,16 @@ def process_data():
             positions_df['key'] = None
 
         combined_df = pd.concat([holdings_df, positions_df], ignore_index=True)
+
         if combined_df.empty:
             print("Combined DataFrame is empty.")
             return combined_df
-        
-        lst = combined_df['key'].tolist()
+
+        lst = combined_df['key'].dropna().tolist()
+        if not lst:
+            print("No valid keys found to fetch OHLC data.")
+            return combined_df
+
         resp = broker.kite.ohlc(lst)
         dct = {
             k: {
@@ -86,16 +94,16 @@ def process_data():
             for k, v in resp.items()
         }
 
-        combined_df['ltp'] = combined_df.apply(lambda row: dct.get(row['key'], {}).get('ltp', row['last_price']), axis=1)
+        combined_df['ltp'] = combined_df.apply(lambda row: dct.get(row['key'], {}).get('ltp', row.get('last_price', 0)), axis=1)
         combined_df['open'] = combined_df['key'].map(lambda x: dct.get(x, {}).get('open', 0))
         combined_df['high'] = combined_df['key'].map(lambda x: dct.get(x, {}).get('high', 0))
         combined_df['low'] = combined_df['key'].map(lambda x: dct.get(x, {}).get('low', 0))
         combined_df['close'] = combined_df['key'].map(lambda x: dct.get(x, {}).get('close_price', 0))
-        combined_df['qty'] = combined_df.apply(lambda row: int(row['quantity'] + row['t1_quantity']) if row['source'] == 'holdings' else int(row['quantity']), axis=1)
+        combined_df['qty'] = combined_df.apply(lambda row: int(row.get('quantity', 0) + row.get('t1_quantity', 0)) if row['source'] == 'holdings' else int(row.get('quantity', 0)), axis=1)
         combined_df['oPL%'] = combined_df.apply(lambda row: round((((row['ltp'] - row['open']) / row['open']) * 100), 2) if row['open'] != 0 else 0, axis=1)
         combined_df['dPL%'] = combined_df.apply(lambda row: round((((row['ltp'] - row['close']) / row['close']) * 100), 2) if row['close'] != 0 else 0, axis=1)
-        combined_df['pnl'] = combined_df['pnl'].astype(int)
-        combined_df['avg'] = combined_df['average_price']
+        combined_df['pnl'] = combined_df.get('pnl', 0).astype(int)
+        combined_df['avg'] = combined_df.get('average_price', 0)
         combined_df['Invested'] = (combined_df['qty'] * combined_df['avg']).round(0).astype(int)
         combined_df['value'] = combined_df['qty'] * combined_df['ltp']
         combined_df['PnL'] = (combined_df['value'] - combined_df['Invested']).astype(int)
