@@ -111,7 +111,7 @@ async def main():
                             PE_PLPREC = int(((position['quantity'] * position['last_price']) - (position['quantity'] * position['average_price'])) / (position['quantity'] * position['average_price']) * 100)
 
                    
-                    return qty_CE, qty_PE
+                    return qty_CE, qty_PE,CE_PLPREC,PE_PLPREC
                 qty_CE, qty_PE,CE_PLPREC,PE_PLPREC = qty_positions_by_type(broker, CE_symbol, PE_symbol)
 
                 # Print all relevant variables before entering the if block
