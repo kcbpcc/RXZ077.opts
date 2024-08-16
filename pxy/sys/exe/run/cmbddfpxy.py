@@ -82,19 +82,15 @@ def process_data():
             print("No valid keys found to fetch OHLC data.")
             return combined_df
 
-        resp = broker.kite.ohlc(lst)
-        dct = {
-            k: {
-                'ltp': v['ohlc'].get('ltp', v['last_price']),
-                'open': v['ohlc']['open'],
-                'high': v['ohlc']['high'],
-                'low': v['ohlc']['low'],
-                'close_price': v['ohlc']['close'],
-            }
-            for k, v in resp.items()
-        }
 
-        combined_df['ltp'] = combined_df.apply(lambda row: dct.get(row['key'], {}).get('ltp', row.get('last_price', 0)), axis=1)
+        combined_df['ltp'] = combined_df['last_price']
+        combined_df['close'] = combined_df['close_price']
+
+
+
+
+
+        
         combined_df['open'] = combined_df['key'].map(lambda x: dct.get(x, {}).get('open', 0))
         combined_df['high'] = combined_df['key'].map(lambda x: dct.get(x, {}).get('high', 0))
         combined_df['low'] = combined_df['key'].map(lambda x: dct.get(x, {}).get('low', 0))
