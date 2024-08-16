@@ -105,21 +105,21 @@ async def main():
                     for position in positions_net:
                         if position['tradingsymbol'] == CE_symbol:
                             qty_CE += int(abs(position['quantity']) / 15)
-                            CE_PLPREC = ((position['quantity'] * position['last_price']) - (position['quantity'] * position['average_price'])) / (position['quantity'] * position['average_price']) * 100
+                            CE_PLPREC = int(((position['quantity'] * position['last_price']) - (position['quantity'] * position['average_price'])) / (position['quantity'] * position['average_price']) * 100)
                         elif position['tradingsymbol'] == PE_symbol:
                             qty_PE += int(abs(position['quantity']) / 15)
-                            PE_PLPREC = ((position['quantity'] * position['last_price']) - (position['quantity'] * position['average_price'])) / (position['quantity'] * position['average_price']) * 100
+                            PE_PLPREC = int(((position['quantity'] * position['last_price']) - (position['quantity'] * position['average_price'])) / (position['quantity'] * position['average_price']) * 100)
 
                    
                     return qty_CE, qty_PE
-                qty_CE, qty_PE = qty_positions_by_type(broker, CE_symbol, PE_symbol)
+                qty_CE, qty_PE,CE_PLPREC,PE_PLPREC = qty_positions_by_type(broker, CE_symbol, PE_symbol)
 
                 # Print all relevant variables before entering the if block
                 #print(f"bmktpredict: {bmktpredict}")
                 #print(f"mktpxy: {mktpxy}")
                 #print(f"CE_position_exists: {CE_position_exists}")
-                print(f"{CE_symbol}                {(f'{qty_CE}x' if CE_position_exists else '')}{'🥚' if CE_position_exists else '🛒'}".rjust(41))
-                print(f"{PE_symbol}                {(f'{qty_PE}x' if PE_position_exists else '')}{'🥚' if PE_position_exists else '🛒'}".rjust(41))
+                print(f"{CE_symbol}     {CE_PLPREC}           {(f'{qty_CE}x' if CE_position_exists else '')}{'🥚' if CE_position_exists else '🛒'}".rjust(41))
+                print(f"{PE_symbol}     {PE_PLPREC}           {(f'{qty_PE}x' if PE_position_exists else '')}{'🥚' if PE_position_exists else '🛒'}".rjust(41))
                 #print(f"count_CE: {count_CE}")
                 #print(f"count_PE: {count_PE}")
                 
