@@ -4,29 +4,35 @@ import pandas as pd
 from login_get_kite import get_kite, remove_token
 from cnstpxy import dir_path
 from toolkit.logger import Logger
-import csv
 import os
-import sys
-import traceback
 import logging
+
 logging = Logger(30, dir_path + "main.log")
 
-def get_holdingsinfo(resp_list, broker):
+def get_holdingsinfo(resp_list):
     try:
-        df = pd.DataFrame(resp_list)
-        df['source'] = 'holdings'
-        return df
+        if resp_list:
+            df = pd.DataFrame(resp_list)
+            df['source'] = 'holdings'
+            return df
+        else:
+            return pd.DataFrame()  # Return empty DataFrame if no data
     except Exception as e:
         print(f"An error occurred in holdings: {e}")
-        return None
-def get_positionsinfo(resp_list, broker):
+        return pd.DataFrame()
+
+def get_positionsinfo(resp_list):
     try:
-        df = pd.DataFrame(resp_list)
-        df['source'] = 'positions'
-        return df
+        if resp_list:
+            df = pd.DataFrame(resp_list)
+            df['source'] = 'positions'
+            return df
+        else:
+            return pd.DataFrame()  # Return empty DataFrame if no data
     except Exception as e:
         print(f"An error occurred in positions: {e}")
-        return None
+        return pd.DataFrame()
+
 try:
     sys.stdout = open('output.txt', 'w')
     broker = get_kite()
@@ -40,17 +46,33 @@ finally:
     if sys.stdout != sys.__stdout__:
         sys.stdout.close()
         sys.stdout = sys.__stdout__
+
 def process_data():
     try:
         holdings_response = broker.kite.holdings()
         positions_response = broker.kite.positions()['net']
-        holdings_df = get_holdingsinfo(holdings_response, broker)
+
+        holdings_df = get_holdingsinfo(holdings_response)
+        positions_df = get_positionsinfo(positions_response)
+
         holdings_df.to_csv('pxyholdings.csv', index=False)
-        positions_df = get_positionsinfo(positions_response, broker)
         positions_df.to_csv('pxypositions.csv', index=False)
-        holdings_df['key'] = holdings_df['exchange'] + ":" + holdings_df['tradingsymbol'] if not holdings_df.empty else None
-        positions_df['key'] = positions_df['exchange'] + ":" + positions_df['tradingsymbol'] if not positions_df.empty else None
+
+        if not holdings_df.empty:
+            holdings_df['key'] = holdings_df['exchange'] + ":" + holdings_df['tradingsymbol']
+        else:
+            holdings_df['key'] = None
+        
+        if not positions_df.empty:
+            positions_df['key'] = positions_df['exchange'] + ":" + positions_df['tradingsymbol']
+        else:
+            positions_df['key'] = None
+
         combined_df = pd.concat([holdings_df, positions_df], ignore_index=True)
+        if combined_df.empty:
+            print("Combined DataFrame is empty.")
+            return combined_df
+        
         lst = combined_df['key'].tolist()
         resp = broker.kite.ohlc(lst)
         dct = {
@@ -63,6 +85,7 @@ def process_data():
             }
             for k, v in resp.items()
         }
+
         combined_df['ltp'] = combined_df.apply(lambda row: dct.get(row['key'], {}).get('ltp', row['last_price']), axis=1)
         combined_df['open'] = combined_df['key'].map(lambda x: dct.get(x, {}).get('open', 0))
         combined_df['high'] = combined_df['key'].map(lambda x: dct.get(x, {}).get('high', 0))
@@ -79,10 +102,16 @@ def process_data():
         combined_df['PL%'] = ((combined_df['PnL'] / combined_df['Invested']) * 100).round(2)
         combined_df['Yvalue'] = combined_df['qty'] * combined_df['close']
         combined_df['dPnL'] = combined_df['value'] - combined_df['Yvalue']
+
         combined_df.to_csv('pxycombined.csv', index=False)
         return combined_df
+
     except Exception as e:
         print(f"An error occurred: {e}")
         traceback.print_exc()
         return None
+
+if __name__ == "__main__":
+    process_data()
+
 
