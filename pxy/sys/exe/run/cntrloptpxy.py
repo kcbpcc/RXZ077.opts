@@ -120,18 +120,10 @@ finally:
         sys.stdout = sys.__stdout__
 
 combined_df = process_data()
-
-# Check if combined_df is not None and not empty
-if combined_df is not None and not combined_df.empty:
-    # Perform operations only if DataFrame is valid
-    exe_opt_df = combined_df[combined_df['key'].str.contains('NFO:', case=False)].copy()
-    exe_opt_df['key'] = exe_opt_df['key'].str.replace('NFO:', '')
-    exe_opt_df['PL%'] = (exe_opt_df['PnL'] / exe_opt_df['Invested']) * 100
-    exe_opt_df['PL%'] = exe_opt_df['PL%'].fillna(0)
-else:
-    # Handle empty or None DataFrame scenario
-    exe_opt_df = pd.DataFrame()  # Initialize an empty DataFrame if needed
-    print("DataFrame is empty or None, no operations performed")
+exe_opt_df = combined_df[combined_df['key'].str.contains('NFO:', case=False)].copy()
+exe_opt_df['key'] = exe_opt_df['key'].str.replace('NFO:', '') 
+exe_opt_df['PL%'] = (exe_opt_df['PnL'] / exe_opt_df['Invested']) * 100
+exe_opt_df['PL%'] = exe_opt_df['PL%'].fillna(0)
 
 exe_opt_df['strike'] = exe_opt_df['key'].str.replace(r'(PE|CE)$', '', regex=True)
 
