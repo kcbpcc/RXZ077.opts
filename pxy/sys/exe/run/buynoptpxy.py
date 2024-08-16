@@ -108,15 +108,15 @@ async def main():
                             PE_PLPREC = int(((position['quantity'] * position['last_price']) - (position['quantity'] * position['average_price'])) / (position['quantity'] * position['average_price']) * 100)
 
                    
-                    return qty_CE, qty_PE
-                qty_CE, qty_PE = qty_positions_by_type(broker, CE_symbol, PE_symbol)
+                    return qty_CE, qty_PE,CE_PLPREC,PE_PLPREC
+                qty_CE, qty_PE,CE_PLPREC,PE_PLPREC = qty_positions_by_type(broker, CE_symbol, PE_symbol)
 
                 # Print all relevant variables before entering the if block
                 #print(f"bmktpredict: {bmktpredict}")
                 #print(f"mktpxy: {mktpxy}")
                 #print(f"CE_position_exists: {CE_position_exists}")
-                print(f"{CE_symbol}                    {(f'{qty_CE}x' if CE_position_exists else '')}{'🥚' if CE_position_exists else '🛒'}".rjust(41))
-                print(f"{PE_symbol}                    {(f'{qty_PE}x' if PE_position_exists else '')}{'🥚' if PE_position_exists else '🛒'}".rjust(41))
+                print(f"{CE_symbol}  {CE_PLPREC:4d}  {(f'{qty_CE}x' if CE_position_exists else '')}{'🥚' if CE_position_exists else '🛒'}".rjust(41))
+                print(f"{PE_symbol}  {PE_PLPREC:4d}  {(f'{qty_PE}x' if PE_position_exists else '')}{'🥚' if PE_position_exists else '🛒'}".rjust(41))
                 #print(f"count_CE: {count_CE}")
                 #print(f"count_PE: {count_PE}")
                 
@@ -147,7 +147,11 @@ async def main():
                     elif mktpxy == "Sell":
                         if nse_power > 0.75:
                             if PE_position_exists:
-                                print(f"    {PE_symbol} is there, let's {BRIGHT_YELLOW}skip{RESET}")
+                                if PE_PLPREC < -7 and qty_PE < 3:
+                                    print(f"  {PE_symbol} is there, let's {BRIGHT_RED}Re-Buy{RESET}")
+                                    await place_order(broker, PE_symbol, 'BUY', 'NRML', 25, 'MARKET')
+                                else:
+                                    print(f"{PE_symbol} is there, let's {BRIGHT_YELLOW}skip{RESET}")
                             else:
                                 print(f"    {PE_symbol} not there, let's Buy")
                                 await process_orders(broker, available_cash, False, PE_position_exists, None, PE_symbol, count_CE, count_PE, mktpxy)
