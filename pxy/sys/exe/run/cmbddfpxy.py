@@ -77,6 +77,11 @@ def process_data():
             print("Combined DataFrame is empty.")
             return combined_df
 
+        # Print column names of each DataFrame
+        print("Holdings DataFrame columns:", holdings_df.columns.tolist())
+        print("Positions DataFrame columns:", positions_df.columns.tolist())
+        print("Combined DataFrame columns:", combined_df.columns.tolist())
+
         lst = combined_df['key'].dropna().tolist()
         if not lst:
             print("No valid keys found to fetch OHLC data.")
@@ -121,5 +126,3 @@ def process_data():
 
 if __name__ == "__main__":
     process_data()
-
-
