@@ -132,7 +132,7 @@ async def main():
                         else:
                             print(f"{CE_symbol} not there, let's Buy")
                             await process_orders(broker, available_cash, CE_position_exists, False, CE_symbol, None, count_CE, count_PE, mktpxy)
-                
+                    
                     elif mktpxy == "Sell":
                         if PE_position_exists:
                             print(f"{PE_symbol} is there, let's {BRIGHT_YELLOW}skip{RESET}")
@@ -147,33 +147,43 @@ async def main():
                         else:
                             print(f"{CE_symbol} not there, let's Buy")
                             await process_orders(broker, available_cash, CE_position_exists, False, CE_symbol, None, count_CE, count_PE, mktpxy)
-                
+                    
                     elif mktpxy == "Sell":
                         if bnk_power > 0.75:
                             if PE_position_exists:
-                                print(f"{PE_symbol} is there, let's {BRIGHT_YELLOW}skip{RESET}")
+                                if PE_PLPREC < -7:
+                                    print(f"{PE_symbol} is there, let's {BRIGHT_YELLOW}ReBuy{RESET}")
+                                    await process_orders(broker, available_cash, False, PE_position_exists, None, PE_symbol, count_CE, count_PE, mktpxy)
+                                else:
+                                    print(f"{PE_symbol} is there, let's {BRIGHT_YELLOW}skip{RESET}")
                             else:
                                 print(f"{PE_symbol} not there, let's Buy")
                                 await process_orders(broker, available_cash, False, PE_position_exists, None, PE_symbol, count_CE, count_PE, mktpxy)
                         else:
-                            print(f"bnk_power:{bnk_power} is not high enough,{BRIGHT_YELLOW}skipping{RESET}")
+                            print(f"bnk_power: {bnk_power} is not high enough, {BRIGHT_YELLOW}skipping{RESET}")
                 
                 elif bmktpredict == "FALL":
                     if mktpxy == "Buy":
                         if bnk_power < 0.25:
                             if CE_position_exists:
-                                print(f"{CE_symbol} is there, let's {BRIGHT_YELLOW}skip{RESET}")
+                                if PE_PLPREC < -7:
+                                    print(f"{CE_symbol} is there, let's {BRIGHT_YELLOW}ReBuy{RESET}")
+                                    await process_orders(broker, available_cash, CE_position_exists, False, CE_symbol, None, count_CE, count_PE, mktpxy)
+                                else:
+                                    print(f"{CE_symbol} is there, let's {BRIGHT_YELLOW}skip{RESET}")
                             else:
                                 print(f"{CE_symbol} not there, let's Buy")
                                 await process_orders(broker, available_cash, CE_position_exists, False, CE_symbol, None, count_CE, count_PE, mktpxy)
                         else:
-                            print(f"bnk_power:{bnk_power} is not low enough, {BRIGHT_YELLOW}skipping{RESET}")
+                            print(f"bnk_power: {bnk_power} is not low enough, {BRIGHT_YELLOW}skipping{RESET}")
+                    
                     elif mktpxy == "Sell":
                         if PE_position_exists:
                             print(f"{PE_symbol} is there, let's {BRIGHT_YELLOW}skip{RESET}")
                         else:
                             print(f"{PE_symbol} not there, let's Buy")
                             await process_orders(broker, available_cash, False, PE_position_exists, None, PE_symbol, count_CE, count_PE, mktpxy)
+
 
             except Exception as e:
                 print(f"Error: {e}")
