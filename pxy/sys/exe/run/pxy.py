@@ -166,7 +166,7 @@ while True:
 
     subprocess.run(['python3', 'telvalpxy.py']) if peak == "PEAKSTART" else None
     
-    if mktpxy in ['Buy', 'Sell']:
+    if mktpxy in ['Buy', 'Bear', 'Bull', 'Sell']:
         importlib.reload(sys.modules.get('mktpxy', None))
         print("━" * 42)
         subprocess.run(['python3', 'buynoptpxy.py']) if peak != 'PEAKSTART' else None
