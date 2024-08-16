@@ -164,13 +164,6 @@ while True:
     subprocess.run(['python3', 'cntrloptpxy.py'] if run_type == 'l' else ['python3', 'cntrloptpxy.py', '-short'])
     ############################################"PXY® PreciseXceleratedYield Pvt Ltd™############################################     ############################################"PXY® PreciseXceleratedYield Pvt Ltd™############################################ 
     subprocess.run(['python3', 'telvalpxy.py']) if peak == "PEAKSTART" else None
-    if bmktpxy in ['Buy', 'Sell']:
-        importlib.reload(sys.modules.get('mktpxy', None))
-        print("━" * 42)
-        subprocess.run(['python3', 'buyboptpxy.py']) if peak != 'PEAKSTART' else None
-    else:
-        print("━" * 42)
-        print(f"{GREY}🚫 Not Buying BANKS opts, as it is {(GREEN if bmktpxy == 'Bull' else RED)}{bmktpxy}{GREY} ✋{RESET}")
     if mktpxy in ['Buy', 'Sell']:
         importlib.reload(sys.modules.get('mktpxy', None))
         print("━" * 42)
@@ -178,12 +171,7 @@ while True:
     else:
         print("━" * 42)
         print(f"{GREY}🚫 Not Buying NIFTY opts, as it is {(GREEN if mktpxy == 'Bull' else RED)}{mktpxy}{GREY} ✋{RESET}")
-    
-    subprocess.run(['python3', 'mngoptpxy.py']) #if (bnk_power > 0.85 or bnk_power < 0.15 or nse_power > 0.85 or nse_power < 0.15) else None
-
-    subprocess.run(['python3', 'worldpxy.py']) if run_type == 'l' else None
-    if (peak == 'PEAKEND' or peak == 'PEAKSTART') and ha_nse_action == 'Bullish':
-        subprocess.run(['python3', 'buycncpxy.py'])
+     subprocess.run(['python3', 'worldpxy.py']) if run_type == 'l' else None
     ############################################"PXY® PreciseXceleratedYield Pvt Ltd™############################################     ############################################"PXY® PreciseXceleratedYield Pvt Ltd™############################################ 
     if run_type == 'l':
         subprocess.run(['python3', 'niftychartpxy.py'])
@@ -192,19 +180,6 @@ while True:
         if 'nsma' in locals():
             color = BRIGHT_GREEN if nsma == "up" else BRIGHT_RED if nsma == "down" else BRIGHT_YELLOW
             print(color + "ﮩ٨ﮩ٨ـﮩ٨ﮩ٨ـﮩ٨ـﮩﮩ٨ﮩ٨NIFTY٨ﮩ٨ـﮩ٨ـﮩﮩ٨ﮩ٨ـﮩ٨ﮩ٨ـﮩ" + RESET)
-        subprocess.run(['python3', 'bniftychartpxy.py'])
-        subprocess.run(['python3', 'bdaypxy.py'])
-        subprocess.run(['python3', 'bcndlpxy.py'])
-        if 'bsma' in locals():
-            color = BRIGHT_GREEN if bsma == "up" else BRIGHT_RED if bsma == "down" else BRIGHT_YELLOW
-            print(color + "ﮩ٨ﮩ٨ـﮩ٨ﮩ٨ـﮩ٨ـﮩﮩ٨BANKNIFTY٨ﮩ٨ـﮩ٨ـﮩﮩ٨ﮩ٨ـﮩ٨ﮩ٨" + RESET)
-    ############################################"PXY® PreciseXceleratedYield Pvt Ltd™############################################    ############################################"PXY® PreciseXceleratedYield Pvt Ltd™############################################ 
-    print("━" * 42)
-    if mktpredict in ['FALL', 'SIDE']:
-        print(f"{'✄┈┈┈┈ CNC Action - NIFTY got down 🛬🛬🛬':>38}{RESET}")
-        subprocess.run(['python3', 'cntrlcncpxy.py'])
-    else:
-        print(f"{GREY}{'𓆝 ⋆｡𖦹°‧🫧⋆.ೃ࿔*:･ No Action - NIFTY on RISE':>38}{RESET}")
     ############################################"PXY® PreciseXceleratedYield Pvt Ltd™############################################    ############################################"PXY® PreciseXceleratedYield Pvt Ltd™############################################ 
     subprocess.run(['python3', 'plpxy.py']) if peak == "PEAKEND" else None
     print("━" * 42)
