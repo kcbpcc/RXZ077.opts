@@ -4,7 +4,7 @@ import os
 
 def get_kite():
     if CNFG["broker"] == "bypass":
-        logging.debug("trying login BYPASS ..")
+        #logging.debug("trying login BYPASS ..")
         kite = _get_bypass()
     else:
         print("trying login ZERODHA ..")
