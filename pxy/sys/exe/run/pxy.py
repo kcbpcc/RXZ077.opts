@@ -162,8 +162,10 @@ while True:
     print("*" * 42)
     subprocess.run(['python3', 'tistpxy.py']) 
     subprocess.run(['python3', 'cntrloptpxy.py'] if run_type == 'l' else ['python3', 'cntrloptpxy.py', '-short'])
-    ############################################"PXY® PreciseXceleratedYield Pvt Ltd™############################################     ############################################"PXY® PreciseXceleratedYield Pvt Ltd™############################################ 
+############################################"PXY® PreciseXceleratedYield Pvt Ltd™############################################
+
     subprocess.run(['python3', 'telvalpxy.py']) if peak == "PEAKSTART" else None
+    
     if mktpxy in ['Buy', 'Sell']:
         importlib.reload(sys.modules.get('mktpxy', None))
         print("━" * 42)
@@ -171,8 +173,11 @@ while True:
     else:
         print("━" * 42)
         print(f"{GREY}🚫 Not Buying NIFTY opts, as it is {(GREEN if mktpxy == 'Bull' else RED)}{mktpxy}{GREY} ✋{RESET}")
-     subprocess.run(['python3', 'worldpxy.py']) if run_type == 'l' else None
-    ############################################"PXY® PreciseXceleratedYield Pvt Ltd™############################################     ############################################"PXY® PreciseXceleratedYield Pvt Ltd™############################################ 
+    
+    subprocess.run(['python3', 'worldpxy.py']) if run_type == 'l' else None
+
+############################################"PXY® PreciseXceleratedYield Pvt Ltd™############################################
+
     if run_type == 'l':
         subprocess.run(['python3', 'niftychartpxy.py'])
         subprocess.run(['python3', 'daypxy.py'])
@@ -180,6 +185,7 @@ while True:
         if 'nsma' in locals():
             color = BRIGHT_GREEN if nsma == "up" else BRIGHT_RED if nsma == "down" else BRIGHT_YELLOW
             print(color + "ﮩ٨ﮩ٨ـﮩ٨ﮩ٨ـﮩ٨ـﮩﮩ٨ﮩ٨NIFTY٨ﮩ٨ـﮩ٨ـﮩﮩ٨ﮩ٨ـﮩ٨ﮩ٨ـﮩ" + RESET)
+
     ############################################"PXY® PreciseXceleratedYield Pvt Ltd™############################################    ############################################"PXY® PreciseXceleratedYield Pvt Ltd™############################################ 
     subprocess.run(['python3', 'plpxy.py']) if peak == "PEAKEND" else None
     print("━" * 42)
