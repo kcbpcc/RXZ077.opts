@@ -9,7 +9,7 @@ from clorpxy import RED, GREEN, SILVER, UNDERLINE, RESET, BRIGHT_YELLOW, BRIGHT_
 
 console = Console()
 
-def get_user_input(prompt, default='l'):
+def get_user_input(prompt, default='s'):
     user_input = input(prompt).strip()
     if user_input == '':
         return default
