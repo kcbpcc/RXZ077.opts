@@ -58,7 +58,7 @@ def process_data():
         positions_df.to_csv('pxypositions.csv', index=False)
 
         if holdings_df.empty and positions_df.empty:
-            print("Both holdings and positions are empty 🗑🗑🗑")
+            print("Both holdings and positions are empty 🗑  🗑")
             return None
 
         if not holdings_df.empty:
