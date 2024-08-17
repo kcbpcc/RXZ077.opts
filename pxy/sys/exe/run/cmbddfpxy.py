@@ -51,7 +51,7 @@ def process_data():
         
         positions_df.to_csv('pxypositions.csv', index=False)
      
-        ifnot positions_df.empty:
+        if not positions_df.empty:
             positions_df['key'] = positions_df['exchange'] + ":" + positions_df['tradingsymbol']
         else:
             positions_df['key'] = None
