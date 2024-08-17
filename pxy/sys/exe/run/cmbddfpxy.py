@@ -7,8 +7,7 @@ from toolkit.logger import Logger
 import os
 import logging
 
-logging = Logger(30, dir_path + "main.log")
-
+logger = Logger(30, dir_path + "main.log")  # Renamed logger instance
 
 def get_positionsinfo(resp_list):
     try:
@@ -28,7 +27,7 @@ try:
 except Exception as e:
     remove_token(dir_path)
     print(traceback.format_exc())
-    logging.error(f"{str(e)} unable to get holdings")
+    logger.error(f"{str(e)} unable to get holdings")
     sys.exit(1)
 finally:
     if sys.stdout != sys.__stdout__:
@@ -39,6 +38,11 @@ def process_data():
     try:
         positions_response = broker.kite.positions().get('net', [])
         positions_df = get_positionsinfo(positions_response)
+        
+        if positions_df.empty:  # Check if positions_df is empty
+            print("No positions available.")
+            return pd.DataFrame()
+
         positions_df.to_csv('pxypositions.csv', index=False)
         combined_df = positions_df.reset_index(drop=True)
         combined_df['key'] = combined_df['exchange'] + ":" + combined_df['tradingsymbol']
@@ -63,3 +67,4 @@ def process_data():
 
 if __name__ == "__main__":
     process_data()
+
