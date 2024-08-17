@@ -1,6 +1,6 @@
 import pandas as pd
 
-defcreate_dummy_df():
+def create_dummy_df():
     # Define the columns and their data types
     columns = {
         'tradingsymbol': 'string',
@@ -43,8 +43,6 @@ defcreate_dummy_df():
 
     return dummy_df
 
-# Example usage:
-df = pd.DataFrame()  # Assume this is your DataFrameif df.empty:
-    df = create_dummy_df()
 
-print(df)
+
+
