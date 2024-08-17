@@ -48,6 +48,11 @@ combined_df = pd.read_csv('pxycombined.csv')
 total_ac_value = round(combined_df.loc[combined_df['qty'] > 0, 'value'].sum() / 100000, 2)
 total_ac_run_pnl = round(combined_df.loc[combined_df['qty'] > 0, 'pnl'].sum() / 100000, 2)
 
+current_month_abbr = datetime.now().strftime('%b').upper()
+current_month_df = combined_df[combined_df['key'].str.contains(current_month_abbr)]
+opts_total_invested = current_month_df['Invested'].sum() if not current_month_df.empty else 0
+opts_total_value = current_month_df['value'].sum() if not current_month_df.empty else 0
+
 # Define a helper function to calculate extras and M2M
 import numpy as np
 import pandas as pd
