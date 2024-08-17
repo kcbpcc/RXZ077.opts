@@ -208,7 +208,8 @@ output_lines.append(
         f"{current_month_abbr}:{month_loss_percentage}:{BRIGHT_GREEN if month_opts_total_value > 0 else BRIGHT_RED}{str(month_opts_total_value).zfill(5)}{RESET}"
     ) + 
     right_aligned_format.format(
-        f"F&O-dPnL:{BRIGHT_GREEN if m2m_opt > 0 else BRIGHT_RED}{str(int(m2m_opt)).zfill(5)}{RESET}"
+        #f"F&O-dPnL:{BRIGHT_GREEN if m2m_opt > 0 else BRIGHT_RED}{str(int(m2m_opt)).zfill(5)}{RESET}"
+        f"CashNow:{BRIGHT_GREEN if live_balance > 50000 else BRIGHT_YELLOW}{int(round(live_balance, 0)):06d}{RESET}"
     )
 )
 
@@ -223,7 +224,7 @@ output_lines.append(
     right_aligned_format.format(f"NFT-bPnL:{BRIGHT_GREEN if nifty_profit > 0 else BRIGHT_RED}{str(nifty_profit).zfill(5)}{RESET}")
 )
 output_lines.append(
-    left_aligned_format.format(f"CashNow:{BRIGHT_GREEN if live_balance > 50000 else BRIGHT_YELLOW}{int(round(live_balance, 0)):06d}{RESET}") +
+    left_aligned_format.format(f"F&O-dPnL:{BRIGHT_GREEN if m2m_opt > 0 else BRIGHT_RED}{str(int(m2m_opt)).zfill(5)}{RESET}") +
     right_aligned_format.format(f"All-bPnL:{BRIGHT_GREEN if (nifty_profit + bank_profit + booked + hide) > 0 else BRIGHT_RED}{str(nifty_profit + bank_profit + booked + hide).zfill(5)}{RESET}"))
 
 full_output = '\n'.join(output_lines)
