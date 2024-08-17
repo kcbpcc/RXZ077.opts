@@ -123,19 +123,12 @@ combined_df = process_data()
 if combined_df is not None:
     exe_opt_df = combined_df[combined_df['key'].str.contains('NFO:', case=False)].copy()
 
-    # Check if the DataFrame is emptyif exe_opt_df.empty:
-        print("No matching records found.")
-        # Handle the empty DataFrame case hereelse:
-        # Proceed with your processing if the DataFrame is not emptyprint("Processing records...")
-        # Add your processing code hereelse:
-    print("combined_df is None. Unable to filter.")
-    # Handle the case where combined_df is None
+    if not exe_opt_df.empty:
+        exe_opt_df['key'] = exe_opt_df['key'].str.replace('NFO:', '')
+        exe_opt_df['PL%'] = (exe_opt_df['PnL'] / exe_opt_df['Invested']) * 100
+        exe_opt_df['PL%'] = exe_opt_df['PL%'].fillna(0)
 
-exe_opt_df['key'] = exe_opt_df['key'].str.replace('NFO:', '') 
-exe_opt_df['PL%'] = (exe_opt_df['PnL'] / exe_opt_df['Invested']) * 100
-exe_opt_df['PL%'] = exe_opt_df['PL%'].fillna(0)
-
-exe_opt_df['strike'] = exe_opt_df['key'].str.replace(r'(PE|CE)$', '', regex=True)
+        exe_opt_df['strike'] = exe_opt_df['key'].str.replace(r'(PE|CE)$', '', regex=True)
 
 def compute_tgtoptsma(row):
     global bsma
