@@ -12,7 +12,7 @@ def get_holdingsinfo(resp_list):
     try:
         if resp_list:  # Check if the response list is not empty
             df = pd.DataFrame(resp_list)
-            df['source'] = 'holdings'else:
+            df['source'] = 'holdings' else:
             df = pd.DataFrame()  # Return an empty DataFrame if no datareturn df
     except Exception as e:
         print(f"An error occurred in holdings: {e}")
@@ -22,7 +22,7 @@ def get_positionsinfo(resp_list):
     try:
         if resp_list:  # Check if the response list is not empty
             df = pd.DataFrame(resp_list)
-            df['source'] = 'positions'else:
+            df['source'] = 'positions' else:
             df = pd.DataFrame()  # Return an empty DataFrame if no datareturn df
     except Exception as e:
         print(f"An error occurred in positions: {e}")
