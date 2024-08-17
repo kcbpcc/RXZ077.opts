@@ -42,10 +42,7 @@ def process_data():
         combined_df = positions_df
         combined_df['ltp'] = combined_df['last_price']
         combined_df['close'] = combined_df['close_price']
-        combined_df['qty'] = combined_df.apply(
-            lambda row: int(row.get('quantity', 0) + row.get('t1_quantity', 0)) if row['source'] == 'holdings'elseint(row.get('quantity', 0)),
-            axis=1
-        )
+        combined_df['qty'] = combined_df['quantity']
         combined_df['pnl'] = combined_df.get('pnl', 0).astype(int)
         combined_df['avg'] = combined_df.get('average_price', 0)
         combined_df['Invested'] = (combined_df['qty'] * combined_df['avg']).round(0).astype(int)
