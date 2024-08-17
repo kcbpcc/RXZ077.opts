@@ -50,10 +50,8 @@ total_ac_run_pnl = round(combined_df.loc[combined_df['qty'] > 0, 'pnl'].sum() / 
 
 current_month_abbr = datetime.now().strftime('%b').upper()
 current_month_df = combined_df[combined_df['key'].str.contains(current_month_abbr)]
-opts_total_invested = current_month_df['Invested'].sum() if not current_month_df.empty else 0
-opts_total_value = current_month_df['value'].sum() if not current_month_df.empty else 0
-
-print(opts_total_value)
+opts_total_invested = int(current_month_df['Invested'].sum()) ifnot current_month_df.empty else0
+opts_total_value = int(current_month_df['value'].sum()) ifnot current_month_df.empty else0
 
 # Define a helper function to calculate extras and M2M
 import numpy as np
@@ -206,7 +204,7 @@ output_lines.append(
 
 output_lines.append(
     left_aligned_format.format(
-        f"C&C-dPnL:{BRIGHT_GREEN if all_Stocks_worth_dpnl > 0 else BRIGHT_RED}{str(int(round(all_Stocks_worth_dpnl, 0))).zfill(5)}{RESET}"
+        f"xxx:{BRIGHT_GREEN if all_Stocks_worth_dpnl > 0 else BRIGHT_RED}{str(opts_total_value).zfill(5)}{RESET}"
     ) + 
     right_aligned_format.format(
         f"F&O-dPnL:{BRIGHT_GREEN if m2m_opt > 0 else BRIGHT_RED}{str(int(m2m_opt)).zfill(5)}{RESET}"
