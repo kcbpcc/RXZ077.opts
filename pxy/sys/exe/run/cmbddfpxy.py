@@ -63,7 +63,7 @@ def process_data():
             return combined_df
 
         lst = combined_df['key'].dropna().tolist()
-        ifnot lst:
+        if not lst:
             print("No valid keys found to fetch OHLC data.")
             return combined_df
 
