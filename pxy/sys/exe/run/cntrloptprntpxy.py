@@ -50,8 +50,8 @@ total_ac_run_pnl = round(combined_df.loc[combined_df['qty'] > 0, 'pnl'].sum() / 
 
 current_month_abbr = datetime.now().strftime('%b').upper()
 current_month_df = combined_df[combined_df['key'].str.contains(current_month_abbr)]
-opts_total_invested = int(current_month_df['Invested'].sum()) ifnot current_month_df.empty else0
-opts_total_value = int(current_month_df['value'].sum()) ifnot current_month_df.empty else0
+opts_total_invested = int(current_month_df['Invested'].sum()) if not current_month_df.empty else 0
+opts_total_value = int(current_month_df['value'].sum()) if not current_month_df.empty else 0
 
 # Define a helper function to calculate extras and M2M
 import numpy as np
