@@ -52,7 +52,7 @@ current_month_abbr = datetime.now().strftime('%b').upper()
 current_month_df = combined_df[combined_df['key'].str.contains(current_month_abbr)]
 month_opts_total_invested = int(current_month_df['Invested'].sum()) if not current_month_df.empty else 0
 month_opts_total_value = int(current_month_df['value'].sum()) if not current_month_df.empty else 0
-month_loss_percentage = int(((month_opts_total_invested - month_opts_total_value) / month_opts_total_invested) * 100)
+month_loss_percentage = int(((month_opts_total_value - month_opts_total_invested) / month_opts_total_invested) * 100)
 
 # Define a helper function to calculate extras and M2M
 import numpy as np
@@ -205,7 +205,7 @@ output_lines.append(
 
 output_lines.append(
     left_aligned_format.format(
-        f"F&O-{current_month_abbr}{month_loss_percentage}:{BRIGHT_GREEN if month_opts_total_value > 0 else BRIGHT_RED}{str(month_opts_total_value).zfill(5)}{RESET}"
+        f"{current_month_abbr}-{month_loss_percentage}:{BRIGHT_GREEN if month_opts_total_value > 0 else BRIGHT_RED}{str(month_opts_total_value).zfill(5)}{RESET}"
     ) + 
     right_aligned_format.format(
         f"F&O-dPnL:{BRIGHT_GREEN if m2m_opt > 0 else BRIGHT_RED}{str(int(m2m_opt)).zfill(5)}{RESET}"
