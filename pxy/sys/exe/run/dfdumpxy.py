@@ -43,6 +43,3 @@ def create_dummy_df():
 
     return dummy_df
 
-
-
-
