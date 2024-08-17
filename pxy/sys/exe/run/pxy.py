@@ -165,10 +165,10 @@ while True:
 ############################################"PXY® PreciseXceleratedYield Pvt Ltd™############################################     ############################################"PXY® PreciseXceleratedYield Pvt Ltd™############################################ 
     if bmktpxy in ['Buy', 'Sell']:
         importlib.reload(sys.modules.get('mktpxy', None))
-        print("━" * 42)
+        #print("━" * 42)
         subprocess.run(['python3', 'buyboptpxy.py']) if peak != 'PEAKSTART' else None
     else:
-        print("━" * 42)
+        #print("━" * 42)
         print(f"{GREY}🚫 Not Buying BANKS opts, as it is {(GREEN if bmktpxy == 'Bull' else RED)}{bmktpxy}{GREY} ✋{RESET}")
 ############################################"PXY® PreciseXceleratedYield Pvt Ltd™############################################     ############################################"PXY® PreciseXceleratedYield Pvt Ltd™############################################ 
     if mktpxy in ['Buy', 'Sell']:
