@@ -53,6 +53,8 @@ current_month_df = combined_df[combined_df['key'].str.contains(current_month_abb
 opts_total_invested = current_month_df['Invested'].sum() if not current_month_df.empty else 0
 opts_total_value = current_month_df['value'].sum() if not current_month_df.empty else 0
 
+print(opts_total_value)
+
 # Define a helper function to calculate extras and M2M
 import numpy as np
 import pandas as pd
