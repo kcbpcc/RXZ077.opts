@@ -17,7 +17,6 @@ nonemincandlesequance, nmktpxy = get_market_check('^NSEI')
 from prftpxy import process_data_total_profit
 booked = process_data_total_profit()
 from telsumrypxy import check_and_send_summary
-from acvalpxy import process_acvalue, retrieve_acvalue
 from smapxy import check_index_status
 nsma = check_index_status('^NSEI')
 bsma = check_index_status('^NSEBANK')
@@ -143,11 +142,6 @@ acvalue = round(total_ac_value + (available_cash / 100000), 2)
 
 from utcpxy import peak_time
 peak = peak_time()
-
-if peak == "PREPEAK":
-    process_acvalue(acvalue)
-
-acvalue = retrieve_acvalue()
 
 #print(" " * 42)
 column_width = 30
@@ -315,4 +309,6 @@ summary = (
     f"                      \n"
     f"[---------PXY® Dash Board----------](https://console.zerodha.com/verified/72e03b58)\n"
 )
+
+
 if peak == "PEAKSTAR": check_and_send_summary(summary, 'bordpxy')
