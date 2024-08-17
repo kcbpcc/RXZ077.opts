@@ -162,7 +162,6 @@ while True:
     print("*" * 42)
     subprocess.run(['python3', 'tistpxy.py']) 
     subprocess.run(['python3', 'cntrloptpxy.py'] if run_type == 'l' else ['python3', 'cntrloptpxy.py', '-short'])
-    subprocess.run(['python3', 'telvalpxy.py']) if peak == "PEAKSTART" else None
 ############################################"PXY® PreciseXceleratedYield Pvt Ltd™############################################     ############################################"PXY® PreciseXceleratedYield Pvt Ltd™############################################ 
     if bmktpxy in ['Buy', 'Sell']:
         importlib.reload(sys.modules.get('mktpxy', None))
