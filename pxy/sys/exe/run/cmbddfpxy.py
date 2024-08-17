@@ -8,7 +8,7 @@ import logging
 
 logging.basicConfig(level=logging.INFO, filename=dir_path + "main.log")
 
-defget_holdingsinfo(resp_list):
+def get_holdingsinfo(resp_list):
     try:
         if resp_list:  # Check if the response list is not empty
             df = pd.DataFrame(resp_list)
@@ -18,7 +18,7 @@ defget_holdingsinfo(resp_list):
         print(f"An error occurred in holdings: {e}")
         return pd.DataFrame()
 
-defget_positionsinfo(resp_list):
+def get_positionsinfo(resp_list):
     try:
         if resp_list:  # Check if the response list is not empty
             df = pd.DataFrame(resp_list)
@@ -28,13 +28,13 @@ defget_positionsinfo(resp_list):
         print(f"An error occurred in positions: {e}")
         return pd.DataFrame()
 
-defprocess_data():
+def process_data():
     try:
         positions_response = broker.kite.positions().get('net', [])
         positions_df = get_positionsinfo(positions_response)
         positions_df.to_csv('pxypositions.csv', index=False)
         
-        ifnot positions_df.empty:
+        if not positions_df.empty:
             positions_df['key'] = positions_df['exchange'] + ":" + positions_df['tradingsymbol']
         else:
             positions_df = positions_df.assign(key=None)
