@@ -205,7 +205,7 @@ output_lines.append(
 
 output_lines.append(
     left_aligned_format.format(
-        f"{current_month_abbr}-{month_loss_percentage}:{BRIGHT_GREEN if month_opts_total_value > 0 else BRIGHT_RED}{str(month_opts_total_value).zfill(5)}{RESET}"
+        f"{current_month_abbr}:{month_loss_percentage}:{BRIGHT_GREEN if month_opts_total_value > 0 else BRIGHT_RED}{str(month_opts_total_value).zfill(5)}{RESET}"
     ) + 
     right_aligned_format.format(
         f"F&O-dPnL:{BRIGHT_GREEN if m2m_opt > 0 else BRIGHT_RED}{str(int(m2m_opt)).zfill(5)}{RESET}"
