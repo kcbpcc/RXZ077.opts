@@ -204,7 +204,7 @@ output_lines.append(
 
 output_lines.append(
     left_aligned_format.format(
-        f"xxx:{BRIGHT_GREEN if all_Stocks_worth_dpnl > 0 else BRIGHT_RED}{str(opts_total_value).zfill(5)}{RESET}"
+        f"F&O-{current_month_abbr}:{BRIGHT_GREEN if opts_total_value > 0 else BRIGHT_RED}{str(opts_total_value).zfill(5)}{RESET}"
     ) + 
     right_aligned_format.format(
         f"F&O-dPnL:{BRIGHT_GREEN if m2m_opt > 0 else BRIGHT_RED}{str(int(m2m_opt)).zfill(5)}{RESET}"
