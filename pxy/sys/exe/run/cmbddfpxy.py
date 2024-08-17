@@ -46,42 +46,16 @@ finally:
         sys.stdout.close()
         sys.stdout = sys.__stdout__
 
-def process_data():
-    try:
-        holdings_response = broker.kite.holdings()
+    def process_data():
+        try:
         positions_response = broker.kite.positions().get('net', [])
-        
-        holdings_df = get_holdingsinfo(holdings_response)
         positions_df = get_positionsinfo(positions_response)
-
-        holdings_df.to_csv('pxyholdings.csv', index=False)
         positions_df.to_csv('pxypositions.csv', index=False)
-
-        if holdings_df.empty and positions_df.empty:
-            print("Both holdings and positions are empty🗑  🗑")
-            return None
-
-        if not holdings_df.empty:
-            holdings_df['key'] = holdings_df['exchange'] + ":" + holdings_df['tradingsymbol']
-        else:
-            holdings_df['key'] = None
-        
         if not positions_df.empty:
             positions_df['key'] = positions_df['exchange'] + ":" + positions_df['tradingsymbol']
         else:
-            positions_df['key'] = None
-
-        combined_df = pd.concat([holdings_df, positions_df], ignore_index=True)
-
-        if combined_df.empty:
-            print("Combined DataFrame is empty.")
-            return combined_df
-
-        lst = combined_df['key'].dropna().tolist()
-        if not lst:
-            print("No valid keys found to fetch OHLC data.")
-            return combined_df
-
+            positions_df = positions_df.assign(key=None)
+        combined_df = positions_df
 
         combined_df['ltp'] = combined_df['last_price']
         combined_df['close'] = combined_df['close_price']
