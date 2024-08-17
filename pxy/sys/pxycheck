@@ -5,7 +5,7 @@ source ~/env/bin/activate
 # Change to the script's directory
 cd ~/pxy/sys/exe/run
 
-read -p "Press Enter to run trndlnpxy.py..."
+read -p "Press Enter to run ..."
 python3 rmtknpxy.py
 python3 loginpxy.py
 
