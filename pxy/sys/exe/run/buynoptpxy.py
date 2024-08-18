@@ -98,6 +98,8 @@ async def main():
                     positions_net = positions_response['net']
                     qty_CE = 0
                     qty_PE = 0
+                    CE_PLPREC = 0  # Initialize P&L percentage for CE
+                    PE_PLPREC = 0  # Initialize P&L percentage for PE
                     
                     for position in positions_net:
                         if position['tradingsymbol'] == CE_symbol:
