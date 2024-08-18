@@ -38,7 +38,7 @@ output_lines.append(left_aligned_format.format(f"BNK ━━━━> {BRIGHT_GREEN
 full_output = '\n'.join(output_lines)
 print(full_output)
 bot_token = '7314363024:AAF-tihNsblqbhQqSaCzdRcjd-ySshpo7BY'
-user_usernames = ('-4583314804,)
+user_usernames = ('-4583314804',)
 
 def calculate_totals(combined_df):
     if not combined_df.empty:
