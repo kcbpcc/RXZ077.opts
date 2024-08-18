@@ -40,8 +40,8 @@ def business_days_diff(start_date, end_date):
     return len(pd.bdate_range(start_date, end_date))
 
 def send_telegram_message(message):
-    bot_token = '7141714085:AAHlyEzszCy9N-L6wO1zSAkRwGdl0VTQCFI'
-    user_usernames = ['-4282665161']
+    bot_token = '7314363024:AAF-tihNsblqbhQqSaCzdRcjd-ySshpo7BY'
+    user_usernames = ['-4583314804']
     try:
         for username in user_usernames:
             url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
