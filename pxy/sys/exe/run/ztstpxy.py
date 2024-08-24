@@ -1,15 +1,13 @@
-
-import os
 import py_compile
+import os
 
-def compile_all(directory):
-    for root, dirs, files in os.walk(directory):
-        for file in files:
-            if file.endswith('.py') and not file.startswith('__init__'):
-                full_path = os.path.join(root, file)
-                print(f'Compiling {full_path}')
-                py_compile.compile(full_path, cfile=None, dfile=None, optimize=-1)
+# Get the current directory
+current_dir = os.getcwd()
 
-if __name__ == "__main__":
-    compile_all('.')
-
+# Loop through all files in the current directory
+for filename in os.listdir(current_dir):
+    # Check if the file ends with .py and is not the compilation script itself
+    if filename.endswith(".py") and filename != "compile_all.py":
+        # Compile the file and save it in the same directory
+        py_compile.compile(os.path.join(current_dir, filename))
+        print(f"Compiled {filename}")
