@@ -167,7 +167,7 @@ while True:
     if data_status == 'full':
         subprocess.run(['python3', 'cntrloptpxy.py'] if run_type == 'l' else ['python3', 'cntrloptpxy.py', '-short'])
     else:
-        print(f"{GREY}⭕cntrlopt says...nothing to control⭕{RESET}")
+        print(f"{GREY}❎⭕cntrlopt says...nothing to control⭕❎{RESET}")
 ############################################"PXY® PreciseXceleratedYield Pvt Ltd™############################################     ############################################"PXY® PreciseXceleratedYield Pvt Ltd™############################################ 
     if bmktpxy in ['Buy', 'Sell']:
         importlib.reload(sys.modules.get('mktpxy', None))
