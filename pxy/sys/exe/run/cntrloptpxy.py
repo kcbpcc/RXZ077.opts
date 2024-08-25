@@ -126,12 +126,14 @@ exe_opt_df = (
     else pd.DataFrame()
 )
 
-# If the DataFrame is not empty, perform the following operations:
-if not exe_opt_df.empty:
-    exe_opt_df['key'] = exe_opt_df['key'].str.replace('NFO:', '')
+# Assuming combined_df is already created from process_data()
+if not combined_df.empty:
+    exe_opt_df = combined_df[combined_df['key'].str.contains('NFO:', case=False)].copy()
+    exe_opt_df['key'] = exe_opt_df['key'].str.replace('NFO:', '') 
     exe_opt_df['PL%'] = (exe_opt_df['PnL'] / exe_opt_df['Invested']) * 100
     exe_opt_df['PL%'] = exe_opt_df['PL%'].fillna(0)
     exe_opt_df['strike'] = exe_opt_df['key'].str.replace(r'(PE|CE)$', '', regex=True)
+
 
 
 def compute_tgtoptsma(row):
