@@ -33,6 +33,9 @@ subprocess.run(['python3', 'cpritepxy.pyc'])
 subprocess.run(['python3', 'worldpxy.pyc'])
 
 while True:
+    from cmbddfpxy import process_data
+    combined_df = process_data()
+    data_status = 'full' if not combined_df.empty else 'nill'
     @handle_exceptions
     def reload_sleeppxy():
         try:
