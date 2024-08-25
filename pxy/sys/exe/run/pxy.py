@@ -33,9 +33,6 @@ subprocess.run(['python3', 'cpritepxy.pyc'])
 subprocess.run(['python3', 'worldpxy.pyc'])
 
 while True:
-    from cmbddfpxy import process_data
-    combined_df = process_data()
-    data_status = 'full' if not combined_df.empty else 'nill'
     @handle_exceptions
     def reload_sleeppxy():
         try:
@@ -164,10 +161,7 @@ while True:
     print((BRIGHT_GREEN + "🏛 PXY® PreciseXceleratedYield Pvt Ltd™ 🏛".center(42) if ha_nse_action == 'Bullish' else BRIGHT_RED + "🏛 PXY® PreciseXceleratedYield Pvt Ltd™ 🏛".center(42) if ha_nse_action == 'Bearish' else "🏛 PXY® PreciseXceleratedYield Pvt Ltd™ 🏛".center(42)) + RESET)    
     print("*" * 42)
     subprocess.run(['python3', 'tistpxy.pyc']) 
-    #if data_status == 'full':
-    subprocess.run(['python3', 'cntrloptpxy.py'] if run_type == 'l' else ['python3', 'cntrloptpxy.py', '-short'])
-    #else:
-        #print(f"{GREY}⭕⭕cntrlopt says...nothing to control⭕❎{RESET}")
+    subprocess.run(['python3', 'cntrloptpxy.pyc'] if run_type == 'l' else ['python3', 'cntrloptpxy.pyc', '-short'])
 ############################################"PXY® PreciseXceleratedYield Pvt Ltd™############################################     ############################################"PXY® PreciseXceleratedYield Pvt Ltd™############################################ 
     if bmktpxy in ['Buy', 'Sell']:
         importlib.reload(sys.modules.get('mktpxy', None))
@@ -177,13 +171,13 @@ while True:
         print("━" * 42)
         print(f"{GREY}🚫 Not Buying BANKS opts, as it is {(GREEN if bmktpxy == 'Bull' else RED)}{bmktpxy}{GREY} ✋{RESET}")
 ############################################"PXY® PreciseXceleratedYield Pvt Ltd™############################################     ############################################"PXY® PreciseXceleratedYield Pvt Ltd™############################################ 
-    #if mktpxy in ['Buy', 'Sell']:
-        #importlib.reload(sys.modules.get('mktpxy', None))
-        #print("━" * 42)
-        #subprocess.run(['python3', 'buynoptpxy.pyc']) if peak != 'PEAKSTART' else None
-    #else:
-        #print("━" * 42)
-        #print(f"{GREY}🚫 Not Buying NIFTY opts, as it is {(GREEN if mktpxy == 'Bull' else RED)}{mktpxy}{GREY} ✋{RESET}")
+    if mktpxy in ['Buy', 'Sell']:
+        importlib.reload(sys.modules.get('mktpxy', None))
+        print("━" * 42)
+        subprocess.run(['python3', 'buynoptpxy.pyc']) if peak != 'PEAKSTART' else None
+    else:
+        print("━" * 42)
+        print(f"{GREY}🚫 Not Buying NIFTY opts, as it is {(GREEN if mktpxy == 'Bull' else RED)}{mktpxy}{GREY} ✋{RESET}")
 ############################################"PXY® PreciseXceleratedYield Pvt Ltd™############################################     ############################################"PXY® PreciseXceleratedYield Pvt Ltd™############################################ 
     subprocess.run(['python3', 'worldpxy.pyc']) if run_type == 'l' else None
     subprocess.run(['python3', 'mngoptpxy.pyc']) #if (bnk_power > 0.85 or bnk_power < 0.15 or nse_power > 0.85 or nse_power < 0.15) else None
