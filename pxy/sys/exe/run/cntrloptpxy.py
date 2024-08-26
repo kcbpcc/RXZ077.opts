@@ -1,4 +1,5 @@
 print("━" * 42)
+import numpy as np
 import sys
 import traceback
 import pandas as pd
@@ -37,8 +38,8 @@ output_lines.append(left_aligned_format.format(f"BNK ━━━━> {BRIGHT_GREEN
                     right_aligned_format.format(f"{ndpt} {BRIGHT_GREEN if mktpredict == 'RISE' else BRIGHT_RED if mktpredict == 'FALL' else BRIGHT_YELLOW}{arrow_map.get(nmktpxy, '')} {mktpredict}{RESET} <━━━━ NFT")) 
 full_output = '\n'.join(output_lines)
 print(full_output)
-bot_token = '7314363024:AAF-tihNsblqbhQqSaCzdRcjd-ySshpo7BY'
-user_usernames = ('-4583314804',)
+bot_token = '7141714085:AAHlyEzszCy9N-L6wO1zSAkRwGdl0VTQCFI'
+user_usernames = ('-4282665161',)
 
 def calculate_totals(combined_df):
     if not combined_df.empty:
@@ -123,8 +124,11 @@ combined_df = process_data()
 exe_opt_df = combined_df[combined_df['key'].str.contains('NFO:', case=False)].copy()
 exe_opt_df['key'] = exe_opt_df['key'].str.replace('NFO:', '') 
 exe_opt_df['PL%'] = (exe_opt_df['PnL'] / exe_opt_df['Invested']) * 100
-exe_opt_df['PL%'] = exe_opt_df['PL%'].fillna(0)
-
+exe_opt_df['PL%'] = np.where(
+    (exe_opt_df['day_sell_quantity'] > 0) & (exe_opt_df['exchange'] == "NFO"), 
+    exe_opt_df['PL%'] - 5, 
+    exe_opt_df['PL%']
+)
 exe_opt_df['strike'] = exe_opt_df['key'].str.replace(r'(PE|CE)$', '', regex=True)
 
 def compute_tgtoptsma(row):
@@ -134,19 +138,19 @@ def compute_tgtoptsma(row):
     key = row['key']
     
     if (bsma == "up" and key.startswith("BANK") and "CE" in key) or (bsma == "down" and key.startswith("BANK") and "PE" in key):
-        return 7
+        return 10
     elif (nsma == "up" and key.startswith("NIFTY") and "CE" in key) or (nsma == "down" and key.startswith("NIFTY") and "PE" in key):
-        return 7
+        return 10
     else:
-        return 5
+        return 10
 
 exe_opt_df['tgtoptsma'] = exe_opt_df.apply(compute_tgtoptsma, axis=1)
 
 
 from vixpxy import get_vixpxy
 n_vix, b_vix = get_vixpxy()
-nvix = n_vix / 2
-bvix = b_vix / 2
+nvix = 1 # n_vix / 2
+bvix = 1 #b_vix / 2
 
 def compute_depth(row):
     try:
@@ -154,41 +158,41 @@ def compute_depth(row):
         
         if row['key'].endswith("CE") and row['key'].startswith("BANK"):
             if bcedepth > 1:
-                return max(row['tgtoptsma'], (bvix + 9 - bcedepth))
+                return max(3, (10 - bcedepth))
             elif bpedepth > 1:
-                return 4
+                return 10
             else:
-                return 5
+                return 10
 
         elif row['key'].endswith("PE") and row['key'].startswith("BANK"):
             if bpedepth > 1:
-                return max(row['tgtoptsma'], (bvix + 9 - bpedepth))
+                return max(3, (10 - bpedepth))
             elif bcedepth > 1:
-                return 4
+                return 10
             else:
-                return 5
+                return 10
 
         elif row['key'].endswith("CE") and row['key'].startswith("NIFTY"):
             if ncedepth > 1:
-                return max(row['tgtoptsma'], (nvix + 9 - ncedepth))
+                return max(3, (10 - ncedepth))
             elif npedepth > 1:
-                return 4
+                return 10
             else:
-                return 5
+                return 10
 
         elif row['key'].endswith("PE") and row['key'].startswith("NIFTY"):
             if npedepth > 1:
-                return max(row['tgtoptsma'], (nvix + 9 - npedepth))
+                return max(3, (10 - npedepth))
             elif ncedepth > 1:
-                return 4
+                return 10
             else:
-                return 5
+                return 10
 
         else:
-            return 5
+            return 10
     except Exception as e:
         # Optionally log the exception e here
-        return 5
+        return 10
 
 
 exe_opt_df['tgtoptsmadepth'] = exe_opt_df.apply(compute_depth, axis=1)
