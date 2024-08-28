@@ -186,7 +186,7 @@ while True:
         subprocess.run(['python3', 'niftychartpxy.pyc'])
         subprocess.run(['python3', 'daypxy.pyc'])
         subprocess.run(['python3', 'cndlpxy.pyc'])
-        if 'nsma' in locals():
+        if 'nsma' in locals(): 
             color = BRIGHT_GREEN if nsma == "up" else BRIGHT_RED if nsma == "down" else BRIGHT_YELLOW
             print(color + "ﮩ٨ﮩ٨ـﮩ٨ﮩ٨ـﮩ٨ـﮩﮩ٨ﮩ٨NIFTY٨ﮩ٨ـﮩ٨ـﮩﮩ٨ﮩ٨ـﮩ٨ﮩ٨ـﮩ" + RESET)
         subprocess.run(['python3', 'bniftychartpxy.pyc'])
