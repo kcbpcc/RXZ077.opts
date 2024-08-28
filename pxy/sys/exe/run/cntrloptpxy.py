@@ -38,9 +38,8 @@ output_lines.append(left_aligned_format.format(f"BNK ━━━━> {BRIGHT_GREEN
                     right_aligned_format.format(f"{ndpt} {BRIGHT_GREEN if mktpredict == 'RISE' else BRIGHT_RED if mktpredict == 'FALL' else BRIGHT_YELLOW}{arrow_map.get(nmktpxy, '')} {mktpredict}{RESET} <━━━━ NFT")) 
 full_output = '\n'.join(output_lines)
 print(full_output)
-
-bot_token = '7314363024:AAF-tihNsblqbhQqSaCzdRcjd-ySshpo7BY'
-user_usernames = ('-4583314804',)
+bot_token = '7141714085:AAHlyEzszCy9N-L6wO1zSAkRwGdl0VTQCFI'
+user_usernames = ('-4282665161',)
 
 def calculate_totals(combined_df):
     if not combined_df.empty:
