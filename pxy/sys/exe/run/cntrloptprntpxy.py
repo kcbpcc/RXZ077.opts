@@ -15,7 +15,7 @@ bmktpredict = predict_bnk_sentiment()
 bonemincandlesequance, bmktpxy = get_market_check('^NSEBANK')
 nonemincandlesequance, nmktpxy = get_market_check('^NSEI')
 #from prftpxy import process_data_total_profit
-#booked = process_data_total_profit()
+booked = 0
 from telsumrypxy import check_and_send_summary
 from smapxy import check_index_status
 nsma = check_index_status('^NSEI')
