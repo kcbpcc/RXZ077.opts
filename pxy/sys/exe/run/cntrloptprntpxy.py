@@ -103,7 +103,7 @@ opt_df = opt_df[['key', 'Invested', 'qty', 'PL%', 'PnL', 'pnl', 'product', 'm2m'
 
 total_invested = opt_df['Invested'].sum()
 cashround = round(live_balance / 100000, 2)
-print(f"Cash rounded to the nearest hundred thousand: {cashround}")
+
 total_pl = opt_df['PnL'].sum()
 total_opt_pnl = opt_df['m2m'].sum()
 total_pl_percentage = (total_pl / total_invested) * 100 if total_invested != 0 else 0
@@ -223,7 +223,7 @@ output_lines.append(
 full_output = '\n'.join(output_lines)
 
 print(full_output)
-
+print(f"Cash rounded to the nearest hundred thousand: {cashround}")
 #print("━" * 42)
 
 for group, data in grouped_df:
