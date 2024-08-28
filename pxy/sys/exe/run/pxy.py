@@ -163,6 +163,14 @@ while True:
     subprocess.run(['python3', 'tistpxy.pyc']) 
     subprocess.run(['python3', 'cntrloptpxy.pyc'] if run_type == 'l' else ['python3', 'cntrloptpxy.pyc', '-short'])
 ############################################"PXY® PreciseXceleratedYield Pvt Ltd™############################################     ############################################"PXY® PreciseXceleratedYield Pvt Ltd™############################################ 
+    if bmktpxy in ['Buy', 'Sell']:
+        importlib.reload(sys.modules.get('mktpxy', None))
+        print("━" * 42)
+        subprocess.run(['python3', 'buyboptpxy.pyc']) if peak != 'PEAKSTART' else None
+    else:
+        print("━" * 42)
+        print(f"{GREY}🚫 Not Buying BANKS opts, as it is {(GREEN if bmktpxy == 'Bull' else RED)}{bmktpxy}{GREY} ✋{RESET}")
+############################################"PXY® PreciseXceleratedYield Pvt Ltd™############################################     ############################################"PXY® PreciseXceleratedYield Pvt Ltd™############################################ 
     if mktpxy in ['Buy', 'Sell']:
         importlib.reload(sys.modules.get('mktpxy', None))
         print("━" * 42)
@@ -170,14 +178,6 @@ while True:
     else:
         print("━" * 42)
         print(f"{GREY}🚫 Not Buying NIFTY opts, as it is {(GREEN if mktpxy == 'Bull' else RED)}{mktpxy}{GREY} ✋{RESET}")
-############################################"PXY® PreciseXceleratedYield Pvt Ltd™############################################     ############################################"PXY® PreciseXceleratedYield Pvt Ltd™############################################ 
-# if mktpxy in ['Buy', 'Sell']:
-#     importlib.reload(sys.modules.get('mktpxy', None))
-#     print("━" * 42)
-#     subprocess.run(['python3', 'buynoptpxy.pyc']) if peak != 'PEAKSTART' else None
-# else:
-#     print("━" * 42)
-#     print(f"{GREY}🚫 Not Buying NIFTY opts, as it is {(GREEN if mktpxy == 'Bull' else RED)}{mktpxy}{GREY} ✋{RESET}")
 ############################################"PXY® PreciseXceleratedYield Pvt Ltd™############################################     ############################################"PXY® PreciseXceleratedYield Pvt Ltd™############################################ 
     subprocess.run(['python3', 'worldpxy.pyc']) if run_type == 'l' else None
     #subprocess.run(['python3', 'mngoptpxy.pyc']) #if (bnk_power > 0.85 or bnk_power < 0.15 or nse_power > 0.85 or nse_power < 0.15) else None
