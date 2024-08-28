@@ -223,7 +223,7 @@ output_lines.append(
 full_output = '\n'.join(output_lines)
 
 print(full_output)
-print(f"Cash rounded to the nearest hundred thousand: {cashround}")
+print(cashround)
 #print("━" * 42)
 
 for group, data in grouped_df:
