@@ -148,13 +148,19 @@ def add_date(row):
     else:
         return None
 
+# Apply the date function to generate Date column
 blnc_opt_df['Date'] = blnc_opt_df.apply(add_date, axis=1)
-blnc_opt_df['Today'] = datetime.now()
 
-blnc_opt_df['Diff'] = blnc_opt_df.apply(lambda row: business_days_diff(row['Date'], row['Today']), axis=1)
+# Ensure 'Date' is a datetime object before extracting the day
+if not pd.api.types.is_datetime64_any_dtype(blnc_opt_df['Date']):
+    blnc_opt_df['Date'] = pd.to_datetime(blnc_opt_df['Date'])
 
+# Now, safely extract the day component
 blnc_opt_df['Date'] = blnc_opt_df['Date'].dt.day
+
+# Do the same for the 'Today' column if necessary
 blnc_opt_df['Today'] = blnc_opt_df['Today'].dt.day
+
 
 blnc_opt_df['Target'] = blnc_opt_df['Diff'].apply(lambda x: (100 - (x * 9)) * -1 if x < 10 else 107)
 
