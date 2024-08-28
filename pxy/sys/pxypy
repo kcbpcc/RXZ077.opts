@@ -4,7 +4,7 @@
 source ~/env/bin/activate
 
 # Change to the script's directory
-cd ~/RXZ077/pxy/sys/exe/run
+cd ~/pxy/sys/exe/run
 
 # List the files in two columns with numbers
 echo "Available scripts:"
