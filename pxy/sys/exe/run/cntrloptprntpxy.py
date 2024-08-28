@@ -199,13 +199,13 @@ output_lines.append(
 )
 output_lines.append(
     left_aligned_format.format(
-        f"A/C-tCap: {BRIGHT_YELLOW}{str(round(CnC_tCap_rounded + (total_invested_all / 100000) + cashround, 2)).zfill(5)}{RESET}"
+        f"A/C-tCap:{BRIGHT_YELLOW}{str(round(CnC_tCap_rounded + (total_invested_all / 100000) + cashround, 2)).zfill(5)}{RESET}"
         f"{BRIGHT_RED if mktpredict == 'FALL' else (GREY if mktpredict == 'SIDE' else BRIGHT_GREEN)}    {BOLD}PXY{RESET}"
     ) +
     right_aligned_format.format(
         f"{BRIGHT_GREEN if nmktpxy == 'Bull' else (BRIGHT_RED if nmktpxy == 'Bear' else GREY)}"
         f"{BOLD}®{RESET}{BRIGHT_YELLOW} {arrow_map.get(nmktpxy, '')}{RESET}    "
-        f"A/C-tPnL: {BRIGHT_GREEN}{str(round(CnC_tCap_rounded + (total_invested_all / 100000) + cashround - 2.0, 2)).zfill(5)}{RESET}"
+        f"A/C-tPnL:{BRIGHT_GREEN}{str(round(CnC_tCap_rounded + (total_invested_all / 100000) + cashround - 2.0, 2)).zfill(5)}{RESET}"
     )
 )
 
