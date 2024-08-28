@@ -164,7 +164,7 @@ while True:
     subprocess.run(['python3', 'tistpxy.pyc']) 
     subprocess.run(['python3', 'cntrloptpxy.pyc'] if run_type == 'l' else ['python3', 'cntrloptpxy.pyc', '-short'])
 ############################################"PXY® PreciseXceleratedYield Pvt Ltd™############################################     ############################################"PXY® PreciseXceleratedYield Pvt Ltd™############################################ 
-playbopts = 'yes'
+playbopts = 'no'
 if playnopts == 'yes':
     if bmktpxy in ['Buy', 'Sell']:
         importlib.reload(sys.modules.get('mktpxy', None))
