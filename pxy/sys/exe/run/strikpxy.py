@@ -9,7 +9,7 @@ def get_current_price(symbol):
     current_price = data['Close'].iloc[-1]  # Get the last available price
     return current_price
 
-def round_to_nearest_500(price):
+def round_to_nearest_100(price):
     return round(price / 100) * 100
 
 def round_to_nearest_500(price):
