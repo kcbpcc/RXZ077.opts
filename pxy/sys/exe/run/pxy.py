@@ -211,5 +211,5 @@ if playnopts == 'yes':
         subprocess.run(['python3', 'cntrloptprntpxy.pyc', 'l'])
     print("━" * 42)
     subprocess.run(['python3', 'selfpxy.pyc'])
-    progress_bar(cycle, (mktpxy if peak in ["PEAKSART", "PEAKEND", "NONPEAK"] else None))
+    progress_bar(10, (mktpxy if peak in ["PEAKSART", "PEAKEND", "NONPEAK"] else None))
 ############################################"PXY® PreciseXceleratedYield Pvt Ltd™############################################    ############################################"PXY® PreciseXceleratedYield Pvt Ltd™############################################ 
