@@ -189,10 +189,11 @@ output_lines.append(left_aligned_format.format(f"F&O-tCap:{BRIGHT_YELLOW}{str(ro
         #f"Flush:{BRIGHT_GREEN if green_Stocks_capital_percentage > 0 else BRIGHT_RED}{str(round(green_Stocks_capital_percentage, 2)).zfill(4)}% {int(green_Stocks_profit_loss / 1000)}K{RESET}"))
 output_lines.append(
     left_aligned_format.format(
-        f"{current_month_abbr}:{month_loss_percentage}:{BRIGHT_GREEN if month_opts_total_value > 0 else BRIGHT_RED}{str(month_opts_total_value).zfill(5)}{RESET}"
+
+        f"CashNow:{BRIGHT_GREEN if live_balance > 50000 else BRIGHT_YELLOW}{int(round(live_balance, 0)):06d}{RESET}"
     ) + 
     right_aligned_format.format(
-        f"CashNow:{BRIGHT_GREEN if live_balance > 50000 else BRIGHT_YELLOW}{int(round(live_balance, 0)):06d}{RESET}"
+        f"{current_month_abbr}:{month_loss_percentage}:{BRIGHT_GREEN if month_opts_total_value > 0 else BRIGHT_RED}{str(month_opts_total_value).zfill(5)}{RESET}"        
     )
 )
 output_lines.append(
