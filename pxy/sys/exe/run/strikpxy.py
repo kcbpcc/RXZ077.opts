@@ -19,10 +19,10 @@ def round_to_nearest_1000(price):
     return round(price / 1000) * 1000
 
 def get_prices():
-    BCE_Strike = round_to_nearest_1000(get_current_price('^NSEBANK'))
+    BCE_Strike = round_to_nearest_100(get_current_price('^NSEBANK'))
     CE_Strike = round_to_nearest_100(get_current_price('^NSEI'))
     PE_Strike = round_to_nearest_100(get_current_price('^NSEI'))
-    BPE_Strike = round_to_nearest_1000(get_current_price('^NSEBANK'))
+    BPE_Strike = round_to_nearest_100(get_current_price('^NSEBANK'))
                                     
     return BCE_Strike, CE_Strike, PE_Strike, BPE_Strike
 
