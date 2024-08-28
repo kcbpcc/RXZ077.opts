@@ -49,14 +49,19 @@ def process_data():
         combined_df['ltp'] = combined_df['last_price']
         combined_df['close'] = combined_df['close_price']
         combined_df['qty'] = combined_df['quantity']
-        combined_df['pnl'] = combined_df.get('pnl', 0).astype(int)
-        combined_df['avg'] = combined_df.get('average_price', 0)
-        combined_df['Invested'] = (combined_df['qty'] * combined_df['avg']).round(0).astype(int)
+        combined_df['pnl'] = combined_df.get('pnl', 0).astype(float)
+        combined_df['unrealised'] = combined_df.get('unrealised', 0).astype(float)
         combined_df['value'] = combined_df['qty'] * combined_df['ltp']
-        combined_df['PnL'] = (combined_df['value'] - combined_df['Invested']).astype(int)
+
+        # Compute Invested as value + unrealised
+        combined_df['Invested'] = (combined_df['value'] + combined_df['pnl']).round(0).astype(float)
+
+        # Calculate profit and loss
+        combined_df['PnL'] = (combined_df['value'] - combined_df['Invested']).astype(float)
         combined_df['PL%'] = ((combined_df['PnL'] / combined_df['Invested']) * 100).round(2)
         combined_df['Yvalue'] = combined_df['qty'] * combined_df['close']
         combined_df['dPnL'] = combined_df['value'] - combined_df['Yvalue']
+
         combined_df.to_csv('pxycombined.csv', index=False)
         return combined_df
 
