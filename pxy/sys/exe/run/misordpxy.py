@@ -66,7 +66,7 @@ def calculate_profit(orders_df, positions_df):
                 # Create dummy orders for overnight positions
                 if trades['buy']:
                     buy = trades['buy'][0]
-                    profit_loss = f'₹{(ltp - buy['price']) * buy['qty']:.2f}' if ltp else '--'
+                    profit_loss = f'₹{(ltp - buy["price"]) * buy["qty"]:.2f}' if ltp else '--'
                     overnight_trades.append({
                         'Symbol': symbol,
                         'Buy Price': buy['price'],
