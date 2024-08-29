@@ -127,6 +127,13 @@ def process_data():
         if orders_df.empty:
             orders_df = pd.DataFrame(columns=['tradingsymbol', 'quantity', 'average_price', 'transaction_type'])
 
+        # Update average_price in orders_df with values from positions_df
+        for index, row in positions_df.iterrows():
+            symbol = row['tradingsymbol']
+            avg_price = row['day_buy_price'] if row['day_buy_price'] > 0 else 0
+            if symbol in orders_df['tradingsymbol'].values:
+                orders_df.loc[orders_df['tradingsymbol'] == symbol, 'average_price'] = avg_price
+
         # Add overnight positions to orders_df
         overnight_positions_df = pd.DataFrame(columns=['tradingsymbol', 'quantity', 'average_price', 'transaction_type'])
 
