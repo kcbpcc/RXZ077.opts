@@ -124,11 +124,26 @@ def process_data():
         orders_df = pd.DataFrame(orders_response)
         positions_df = get_positionsinfo(positions_response)
 
-        # Initialize Orders DataFrame if empty
+        # If orders_df is empty, initialize it and add overnight positions
         if orders_df.empty:
-            orders_df = pd.DataFrame(columns=['tradingsymbol', 'quantity', 'average_price'])
-        else:
-            orders_df = pd.concat([orders_df, pd.DataFrame(orders_response)], ignore_index=True)
+            orders_df = pd.DataFrame(columns=['tradingsymbol', 'quantity', 'average_price', 'transaction_type'])
+
+        # Add overnight positions to orders_df
+        for index, row in positions_df.iterrows():
+            symbol = row['tradingsymbol']
+            qty = row['overnight_quantity']
+            if qty > 0:
+                avg_price = row['day_buy_price'] if row['day_buy_price'] > 0 else 0
+                if symbol not in orders_df['tradingsymbol'].values:
+                    orders_df = orders_df.append({
+                        'tradingsymbol': symbol,
+                        'quantity': qty,
+                        'average_price': avg_price,
+                        'transaction_type': 'BUY'
+                    }, ignore_index=True)
+                else:
+                    # Update existing entry if already present
+                    orders_df.loc[orders_df['tradingsymbol'] == symbol, 'quantity'] += qty
 
         # Print DataFrames for debugging
         print("Orders DataFrame:")
