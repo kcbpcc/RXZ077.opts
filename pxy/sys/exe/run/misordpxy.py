@@ -90,15 +90,12 @@ def calculate_profit(orders_df, positions_df):
                         })
 
         # Create DataFrames for different trade types
-        closed_df = pd.DataFrame(closed_trades)
-        open_df = pd.DataFrame(open_trades)
-        overnight_open_df = pd.DataFrame(overnight_open_trades)
-        overnight_closed_df = pd.DataFrame(overnight_closed_trades)
+        closed_df = pd.DataFrame(closed_trades, columns=['Symbol', 'Buy Price', 'Sell Price', 'Quantity', 'Profit/Loss', 'PL%', 'Status'])
+        open_df = pd.DataFrame(open_trades, columns=['Symbol', 'Buy Price', 'Sell Price', 'Quantity', 'Profit/Loss', 'PL%', 'Status'])
+        overnight_open_df = pd.DataFrame(overnight_open_trades, columns=['Symbol', 'Buy Price', 'Sell Price', 'Quantity', 'Profit/Loss', 'PL%', 'Status'])
+        overnight_closed_df = pd.DataFrame(overnight_closed_trades, columns=['Symbol', 'Buy Price', 'Sell Price', 'Quantity', 'Profit/Loss', 'PL%', 'Status'])
 
-        return closed_df[['Symbol', 'Buy Price', 'Sell Price', 'Quantity', 'Profit/Loss', 'PL%','Status']], \
-               open_df[['Symbol', 'Buy Price', 'Sell Price', 'Quantity', 'Profit/Loss', 'PL%','Status']], \
-               overnight_open_df[['Symbol', 'Buy Price', 'Sell Price', 'Quantity', 'Profit/Loss', 'PL%','Status']], \
-               overnight_closed_df[['Symbol', 'Buy Price', 'Sell Price', 'Quantity', 'Profit/Loss', 'PL%','Status']]
+        return closed_df, open_df, overnight_open_df, overnight_closed_df
 
     except Exception as e:
         print(f"An error occurred in profit calculation: {e}")
