@@ -41,7 +41,8 @@ def calculate_profit(orders_df, positions_df):
         # Create lists for different trade types
         closed_trades = []
         open_trades = []
-        overnight_trades = []
+        overnight_open_trades = []
+        overnight_closed_trades = []
 
         for symbol, trades in trade_data.items():
             ltp = positions_df.loc[positions_df['tradingsymbol'] == symbol, 'last_price'].values[0] if not positions_df.empty else None
@@ -63,32 +64,45 @@ def calculate_profit(orders_df, positions_df):
                         'Status': 'Closed'
                     })
             else:
-                # Create dummy orders for overnight positions
+                # Handle overnight positions
                 if trades['buy']:
                     buy = trades['buy'][0]
                     profit_loss = f'₹{(ltp - buy["price"]) * buy["qty"]:.2f}' if ltp else '--'
-                    overnight_trades.append({
-                        'Symbol': symbol,
-                        'Buy Price': buy['price'],
-                        'Sell Price': '--',
-                        'Quantity': buy['qty'],
-                        'Profit/Loss': profit_loss,
-                        'PL%': '--',
-                        'Status': 'Open'
-                    })
+                    if ltp:
+                        overnight_open_trades.append({
+                            'Symbol': symbol,
+                            'Buy Price': buy['price'],
+                            'Sell Price': '--',
+                            'Quantity': buy['qty'],
+                            'Profit/Loss': profit_loss,
+                            'PL%': '--',
+                            'Status': 'Open'
+                        })
+                    else:
+                        overnight_closed_trades.append({
+                            'Symbol': symbol,
+                            'Buy Price': buy['price'],
+                            'Sell Price': '--',
+                            'Quantity': buy['qty'],
+                            'Profit/Loss': '--',
+                            'PL%': '--',
+                            'Status': 'Overnight'
+                        })
 
         # Create DataFrames for different trade types
         closed_df = pd.DataFrame(closed_trades)
         open_df = pd.DataFrame(open_trades)
-        overnight_df = pd.DataFrame(overnight_trades)
+        overnight_open_df = pd.DataFrame(overnight_open_trades)
+        overnight_closed_df = pd.DataFrame(overnight_closed_trades)
 
         return closed_df[['Symbol', 'Buy Price', 'Sell Price', 'Quantity', 'Profit/Loss', 'PL%','Status']], \
                open_df[['Symbol', 'Buy Price', 'Sell Price', 'Quantity', 'Profit/Loss', 'PL%','Status']], \
-               overnight_df[['Symbol', 'Buy Price', 'Sell Price', 'Quantity', 'Profit/Loss', 'PL%','Status']]
+               overnight_open_df[['Symbol', 'Buy Price', 'Sell Price', 'Quantity', 'Profit/Loss', 'PL%','Status']], \
+               overnight_closed_df[['Symbol', 'Buy Price', 'Sell Price', 'Quantity', 'Profit/Loss', 'PL%','Status']]
 
     except Exception as e:
         print(f"An error occurred in profit calculation: {e}")
-        return pd.DataFrame(), pd.DataFrame(), pd.DataFrame()
+        return pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), pd.DataFrame()
 
 def process_data():
     try:
@@ -127,21 +141,23 @@ def process_data():
         print(positions_df.head())
 
         # Calculate profit and create DataFrames
-        closed_df, open_df, overnight_df = calculate_profit(orders_df, positions_df)
+        closed_df, open_df, overnight_open_df, overnight_closed_df = calculate_profit(orders_df, positions_df)
 
         # Print DataFrames
         print("Closed Orders:")
         print(closed_df)
         print("\nOpen Orders:")
         print(open_df)
-        print("\nOvernight Positions:")
-        print(overnight_df)
+        print("\nOvernight Open Positions:")
+        print(overnight_open_df)
+        print("\nOvernight Closed Positions:")
+        print(overnight_closed_df)
 
-        return closed_df, open_df, overnight_df
+        return closed_df, open_df, overnight_open_df, overnight_closed_df
 
     except Exception as e:
         print(f"An error occurred in processing data: {e}")
-        return pd.DataFrame(), pd.DataFrame(), pd.DataFrame()
+        return pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), pd.DataFrame()
 
 # Run the data processing function
 process_data()
