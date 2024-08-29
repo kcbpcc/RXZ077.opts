@@ -57,10 +57,8 @@ def calculate_profit(orders_df, positions_df):
                         'Symbol': symbol,
                         'Buy Price': buy['price'],
                         'Sell Price': sell['price'],
-                        'LTP': ltp,
                         'Quantity': buy['qty'],
-                        'Profit/Loss': pnl,
-                        'PL%': pl_percent,
+                        'Profit/Loss': f'₹{pnl:.2f}',
                         'Status': 'Closed'
                     })
             else:
@@ -70,12 +68,10 @@ def calculate_profit(orders_df, positions_df):
                     overnight_trades.append({
                         'Symbol': symbol,
                         'Buy Price': buy['price'],
-                        'Sell Price': None,
-                        'LTP': ltp,
+                        'Sell Price': '--',
                         'Quantity': buy['qty'],
-                        'Profit/Loss': (ltp - buy['price']) * buy['qty'] if ltp else None,
-                        'PL%': ((ltp - buy['price']) / buy['price']) * 100 if ltp else None,
-                        'Status': 'Overnight'
+                        'Profit/Loss': f'₹{(ltp - buy['price']) * buy['qty']:.2f}' if ltp else '--',
+                        'Status': 'Open'
                     })
 
         # Adding dummy trades to positions_df for further calculations
@@ -94,17 +90,19 @@ def calculate_profit(orders_df, positions_df):
                 open_trades.append({
                     'Symbol': symbol,
                     'Buy Price': buy['price'],
-                    'Sell Price': None,
-                    'LTP': ltp,
+                    'Sell Price': '--',
                     'Quantity': buy['qty'],
-                    'Profit/Loss': pnl,
-                    'PL%': pl_percent,
+                    'Profit/Loss': f'₹{pnl:.2f}' if pnl else '--',
                     'Status': 'Open'
                 })
 
         closed_df = pd.DataFrame(closed_trades)
         open_df = pd.DataFrame(open_trades)
-        return closed_df, open_df, all_trades_df
+
+        return closed_df[['Symbol', 'Buy Price', 'Sell Price', 'Quantity', 'Profit/Loss', 'Status']], \
+               open_df[['Symbol', 'Buy Price', 'Sell Price', 'Quantity', 'Profit/Loss', 'Status']], \
+               all_trades_df[['tradingsymbol', 'average_price', 'quantity', 'transaction_type']]
+
     except Exception as e:
         print(f"An error occurred in profit calculation: {e}")
         return pd.DataFrame(), pd.DataFrame(), pd.DataFrame()
