@@ -158,7 +158,7 @@ async def main():
                             if PE_position_exists:
                                 if PE_PLPREC < -7 and qty_PE < 3:
                                     print(f"{PE_symbol} is there,But {BRIGHT_RED}Re-Buy{RESET}")
-                                    await place_order(broker, PE_symbol, 'BUY', 'NRML', 15, 'MARKET')
+                                    await place_order(broker, PE_symbol, 'BUY', 'MIS', 15, 'MARKET')
                                 else:
                                     print(f"{PE_symbol} is there, let's {BRIGHT_YELLOW}skip{RESET}")
                             else:
