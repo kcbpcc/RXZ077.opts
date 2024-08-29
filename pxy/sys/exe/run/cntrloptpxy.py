@@ -123,12 +123,7 @@ finally:
 combined_df = process_data()
 exe_opt_df = combined_df[combined_df['key'].str.contains('NFO:', case=False)].copy()
 exe_opt_df['key'] = exe_opt_df['key'].str.replace('NFO:', '') 
-exe_opt_df['PL%'] = (exe_opt_df['PnL'] / exe_opt_df['Invested']) * 100
-exe_opt_df['PL%'] = np.where(
-    (exe_opt_df['day_sell_quantity'] > 0) & (exe_opt_df['exchange'] == "NFO"), 
-    exe_opt_df['PL%'] - 5, 
-    exe_opt_df['PL%']
-)
+exe_opt_df['PL%'] = ((exe_opt_df['pnl'] / exe_opt_df['buy_value']) * 100).round(2)
 exe_opt_df['strike'] = exe_opt_df['key'].str.replace(r'(PE|CE)$', '', regex=True)
 
 def compute_tgtoptsma(row):
