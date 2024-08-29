@@ -101,7 +101,7 @@ def exit_options(exe_opt_df, broker):
                     f"   📈 Buy Price: {round(row['avg'], 2)}\n"
                     f"   💰 Booked Profit: {row['PnL']}📣"
                 )
-                place_order(row['key'], row['qty'], 'SELL', 'MARKET', 'NRML', broker, message)
+                place_order(row['key'], row['qty'], 'SELL', 'MARKET', 'MIS', broker, message)
                 print(message)
 
     except Exception as e:
