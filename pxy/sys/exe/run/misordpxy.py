@@ -126,10 +126,10 @@ def process_data():
                 sys.stdout = sys.__stdout__
 
         # Retrieve orders and positions
-        orders_response = broker.kite.orders().get('orders', [])
+        orders_response = broker.kite.orders()
         positions_response = broker.kite.positions().get('net', [])
 
-        # Ensure responses are lists
+        # Check the type of response
         if isinstance(orders_response, dict):
             orders_response = orders_response.get('orders', [])
         if isinstance(positions_response, dict):
@@ -138,6 +138,12 @@ def process_data():
         # Convert responses to DataFrames
         orders_df = pd.DataFrame(orders_response)
         positions_df = get_positionsinfo(positions_response)
+
+        # Print DataFrames for debugging
+        print("Orders DataFrame:")
+        print(orders_df.head())
+        print("\nPositions DataFrame:")
+        print(positions_df.head())
 
         # Calculate profit and create DataFrames
         closed_df, open_df, all_trades_df = calculate_profit(orders_df, positions_df)
@@ -158,5 +164,6 @@ def process_data():
 
 # Run the data processing function
 process_data()
+
 
 
