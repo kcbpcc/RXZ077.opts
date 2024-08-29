@@ -12,11 +12,11 @@ logger = Logger(30, dir_path + "main.log")
 
 def get_positionsinfo(resp_list):
     try:
-        if resp_list:  # Check if the response list is not empty
+        if isinstance(resp_list, list):  # Check if the response is a list
             df = pd.DataFrame(resp_list)
             df['source'] = 'positions'
         else:
-            df = pd.DataFrame()  # Return an empty DataFrame if no data
+            df = pd.DataFrame()  # Return an empty DataFrame if the response is not a list
         return df
     except Exception as e:
         print(f"An error occurred in positions: {e}")
@@ -127,8 +127,16 @@ def process_data():
 
         # Retrieve orders and positions
         orders_response = broker.kite.orders().get('orders', [])
-        orders_df = pd.DataFrame(orders_response)
         positions_response = broker.kite.positions().get('net', [])
+
+        # Ensure responses are lists
+        if isinstance(orders_response, dict):
+            orders_response = orders_response.get('orders', [])
+        if isinstance(positions_response, dict):
+            positions_response = positions_response.get('net', [])
+
+        # Convert responses to DataFrames
+        orders_df = pd.DataFrame(orders_response)
         positions_df = get_positionsinfo(positions_response)
 
         # Calculate profit and create DataFrames
@@ -150,4 +158,5 @@ def process_data():
 
 # Run the data processing function
 process_data()
+
 
