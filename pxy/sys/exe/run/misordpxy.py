@@ -7,31 +7,19 @@ from toolkit.logger import Logger
 import os
 import logging
 
-logger = Logger(30, dir_path + "main.log")  # Renamed logger instance
+# Setup logging
+logger = Logger(30, dir_path + "main.log")
 
-def get_ordersinfo(orders):
+def get_positionsinfo(resp_list):
     try:
-        if orders:  # Check if the orders list is not empty
-            df = pd.DataFrame(orders)
-            df = df[df['status'] == 'COMPLETE']  # Filter only completed orders
-            df = df[['order_timestamp', 'transaction_type', 'tradingsymbol', 'product', 'quantity', 'average_price', 'status']]
-            return df
+        if resp_list:  # Check if the response list is not empty
+            df = pd.DataFrame(resp_list)
+            df['source'] = 'positions'
         else:
-            return pd.DataFrame()  # Return an empty DataFrame if no data
+            df = pd.DataFrame()  # Return an empty DataFrame if no data
+        return df
     except Exception as e:
-        print(f"An error occurred in fetching orders: {e}")
-        return pd.DataFrame()
-
-def get_positionsinfo(positions):
-    try:
-        if positions:  # Check if the positions list is not empty
-            df = pd.DataFrame(positions)
-            df = df[['tradingsymbol', 'last_price']]  # Extract only relevant columns
-            return df
-        else:
-            return pd.DataFrame()  # Return an empty DataFrame if no data
-    except Exception as e:
-        print(f"An error occurred in fetching positions: {e}")
+        print(f"An error occurred in positions: {e}")
         return pd.DataFrame()
 
 def calculate_profit(orders_df, positions_df):
@@ -50,7 +38,8 @@ def calculate_profit(orders_df, positions_df):
 
             trade_data[symbol][order_type.lower()].append({'price': price, 'qty': qty})
 
-        # Now calculate PnL
+        # Create lists for different trade types
+        overnight_trades = []
         closed_trades = []
         open_trades = []
 
@@ -75,76 +64,90 @@ def calculate_profit(orders_df, positions_df):
                         'Status': 'Closed'
                     })
             else:
-                # If only buy order exists, calculate unrealized profit/loss
+                # Create dummy orders for overnight positions
                 if trades['buy']:
-                    pnl = (ltp - trades['buy'][0]['price']) * trades['buy'][0]['qty'] if ltp else None
-                    pl_percent = (pnl / (trades['buy'][0]['price'] * trades['buy'][0]['qty'])) * 100 if pnl else None
-                    open_trades.append({
+                    buy = trades['buy'][0]
+                    overnight_trades.append({
                         'Symbol': symbol,
-                        'Buy Price': trades['buy'][0]['price'],
+                        'Buy Price': buy['price'],
                         'Sell Price': None,
                         'LTP': ltp,
-                        'Quantity': trades['buy'][0]['qty'],
-                        'Profit/Loss': pnl,
-                        'PL%': pl_percent,
-                        'Status': 'Open'
+                        'Quantity': buy['qty'],
+                        'Profit/Loss': (ltp - buy['price']) * buy['qty'] if ltp else None,
+                        'PL%': ((ltp - buy['price']) / buy['price']) * 100 if ltp else None,
+                        'Status': 'Overnight'
                     })
 
-        return pd.DataFrame(closed_trades), pd.DataFrame(open_trades)
+        # Adding dummy trades to positions_df for further calculations
+        overnight_df = pd.DataFrame(overnight_trades)
+        all_trades_df = pd.concat([orders_df, overnight_df], ignore_index=True)
+
+        # Process open trades again to separate them from the dummy overnight trades
+        for symbol, trades in trade_data.items():
+            ltp = positions_df.loc[positions_df['tradingsymbol'] == symbol, 'last_price'].values[0] if not positions_df.empty else None
+
+            if trades['buy'] and not trades['sell']:
+                # If only buy order exists, calculate unrealized profit/loss
+                buy = trades['buy'][0]
+                pnl = (ltp - buy['price']) * buy['qty'] if ltp else None
+                pl_percent = (pnl / (buy['price'] * buy['qty'])) * 100 if pnl else None
+                open_trades.append({
+                    'Symbol': symbol,
+                    'Buy Price': buy['price'],
+                    'Sell Price': None,
+                    'LTP': ltp,
+                    'Quantity': buy['qty'],
+                    'Profit/Loss': pnl,
+                    'PL%': pl_percent,
+                    'Status': 'Open'
+                })
+
+        closed_df = pd.DataFrame(closed_trades)
+        open_df = pd.DataFrame(open_trades)
+        return closed_df, open_df, all_trades_df
     except Exception as e:
         print(f"An error occurred in profit calculation: {e}")
-        return pd.DataFrame(), pd.DataFrame()
-
-try:
-    sys.stdout = open('output.txt', 'w')
-    broker = get_kite()
-except Exception as e:
-    remove_token(dir_path)
-    print(traceback.format_exc())
-    logger.error(f"{str(e)} unable to get holdings")
-    sys.exit(1)
-finally:
-    if sys.stdout != sys.__stdout__:
-        sys.stdout.close()
-        sys.stdout = sys.__stdout__
+        return pd.DataFrame(), pd.DataFrame(), pd.DataFrame()
 
 def process_data():
     try:
-        # Retrieve orders using the Kite Connect API
-        orders_response = broker.kite.orders()
-        orders_df = get_ordersinfo(orders_response)
+        # Initialize Kite connection
+        try:
+            sys.stdout = open('output.txt', 'w')
+            broker = get_kite()
+        except Exception as e:
+            remove_token(dir_path)
+            print(traceback.format_exc())
+            logger.error(f"{str(e)} unable to get holdings")
+            sys.exit(1)
+        finally:
+            if sys.stdout != sys.__stdout__:
+                sys.stdout.close()
+                sys.stdout = sys.__stdout__
 
-        if orders_df.empty:  # Check if orders_df is empty
-            print("No completed orders available.")
-            return pd.DataFrame(), pd.DataFrame()
-
-        # Retrieve positions using the Kite Connect API
+        # Retrieve orders and positions
+        orders_response = broker.kite.orders().get('orders', [])
+        orders_df = pd.DataFrame(orders_response)
         positions_response = broker.kite.positions().get('net', [])
         positions_df = get_positionsinfo(positions_response)
 
-        if positions_df.empty:  # Check if positions_df is empty
-            print("No positions available.")
-            return pd.DataFrame(), pd.DataFrame()
+        # Calculate profit and create DataFrames
+        closed_df, open_df, all_trades_df = calculate_profit(orders_df, positions_df)
 
-        # Calculate profit or loss and split into closed and open trades
-        closed_df, open_df = calculate_profit(orders_df, positions_df)
+        # Print DataFrames
+        print("Closed Orders:")
+        print(closed_df)
+        print("\nOpen Orders:")
+        print(open_df)
+        print("\nAll Trades (Including Overnight):")
+        print(all_trades_df)
 
-        # Print the results
-        print("Closed Trades:")
-        print(closed_df.to_string(index=False))
-        print("\nOpen Trades:")
-        print(open_df.to_string(index=False))
-
-        # Optionally, save results to CSV files
-        closed_df.to_csv('closed_trades.csv', index=False)
-        open_df.to_csv('open_trades.csv', index=False)
+        return closed_df, open_df, all_trades_df
 
     except Exception as e:
-        print(f"An error occurred during data processing: {e}")
-        logger.error(f"{str(e)} unable to process orders")
-        return pd.DataFrame(), pd.DataFrame()
+        print(f"An error occurred in processing data: {e}")
+        return pd.DataFrame(), pd.DataFrame(), pd.DataFrame()
 
-# Call the process_data function
+# Run the data processing function
 process_data()
-
 
