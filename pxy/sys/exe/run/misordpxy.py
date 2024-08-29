@@ -24,14 +24,9 @@ def get_positionsinfo(resp_list):
 
 def calculate_profit(orders_df, positions_df):
     try:
-        # Convert order times to datetime for accurate sorting
-        orders_df['timestamp'] = pd.to_datetime(orders_df['timestamp'])
-        
-        # Sort orders by timestamp
-        orders_df = orders_df.sort_values(by='timestamp')
-
-        # Create dictionaries to store buy and sell orders
+        # Create a dictionary to hold buy/sell orders
         trade_data = {}
+
         for index, row in orders_df.iterrows():
             symbol = row['tradingsymbol']
             qty = row['quantity']
@@ -47,16 +42,14 @@ def calculate_profit(orders_df, positions_df):
         closed_trades = []
         open_trades = []
         overnight_open_trades = []
+        overnight_closed_trades = []
 
         for symbol, trades in trade_data.items():
             ltp = positions_df.loc[positions_df['tradingsymbol'] == symbol, 'last_price'].values[0] if not positions_df.empty else None
-            
-            buy_orders = trades['buy']
-            sell_orders = trades['sell']
 
-            while buy_orders and sell_orders:
-                buy = buy_orders.pop(0)
-                sell = sell_orders.pop(0)
+            if trades['buy'] and trades['sell']:
+                buy = trades['buy'][0]
+                sell = trades['sell'][0]
 
                 if buy['qty'] == sell['qty']:
                     pnl = (sell['price'] - buy['price']) * buy['qty']
@@ -70,44 +63,12 @@ def calculate_profit(orders_df, positions_df):
                         'PL%': f'{pl_percent:.2f}%',
                         'Status': 'Closed'
                     })
-                elif buy['qty'] > sell['qty']:
-                    # Partial sell of buy order
-                    remaining_qty = buy['qty'] - sell['qty']
-                    remaining_buy = {'price': buy['price'], 'qty': remaining_qty}
-                    buy_orders.insert(0, remaining_buy)  # Re-insert the remaining buy order
-                    pnl = (sell['price'] - buy['price']) * sell['qty']
-                    pl_percent = (pnl / (buy['price'] * sell['qty'])) * 100
-                    closed_trades.append({
-                        'Symbol': symbol,
-                        'Buy Price': buy['price'],
-                        'Sell Price': sell['price'],
-                        'Quantity': sell['qty'],
-                        'Profit/Loss': f'₹{pnl:.2f}',
-                        'PL%': f'{pl_percent:.2f}%',
-                        'Status': 'Closed'
-                    })
-                else:
-                    # Partial buy of sell order
-                    remaining_qty = sell['qty'] - buy['qty']
-                    remaining_sell = {'price': sell['price'], 'qty': remaining_qty}
-                    sell_orders.insert(0, remaining_sell)  # Re-insert the remaining sell order
-                    pnl = (sell['price'] - buy['price']) * buy['qty']
-                    pl_percent = (pnl / (buy['price'] * buy['qty'])) * 100
-                    closed_trades.append({
-                        'Symbol': symbol,
-                        'Buy Price': buy['price'],
-                        'Sell Price': sell['price'],
-                        'Quantity': buy['qty'],
-                        'Profit/Loss': f'₹{pnl:.2f}',
-                        'PL%': f'{pl_percent:.2f}%',
-                        'Status': 'Closed'
-                    })
-
-            # Handle remaining buy orders as open trades
-            if buy_orders:
-                for buy in buy_orders:
+            else:
+                # Handle overnight positions
+                if trades['buy']:
+                    buy = trades['buy'][0]
+                    profit_loss = f'₹{(ltp - buy["price"]) * buy["qty"]:.2f}' if ltp else '--'
                     if ltp:
-                        profit_loss = f'₹{(ltp - buy["price"]) * buy["qty"]:.2f}'
                         overnight_open_trades.append({
                             'Symbol': symbol,
                             'Buy Price': buy['price'],
@@ -117,17 +78,28 @@ def calculate_profit(orders_df, positions_df):
                             'PL%': '--',
                             'Status': 'Open'
                         })
+                    else:
+                        overnight_closed_trades.append({
+                            'Symbol': symbol,
+                            'Buy Price': buy['price'],
+                            'Sell Price': '--',
+                            'Quantity': buy['qty'],
+                            'Profit/Loss': '--',
+                            'PL%': '--',
+                            'Status': 'Overnight'
+                        })
 
         # Create DataFrames for different trade types
         closed_df = pd.DataFrame(closed_trades, columns=['Symbol', 'Buy Price', 'Sell Price', 'Quantity', 'Profit/Loss', 'PL%', 'Status'])
         open_df = pd.DataFrame(open_trades, columns=['Symbol', 'Buy Price', 'Sell Price', 'Quantity', 'Profit/Loss', 'PL%', 'Status'])
         overnight_open_df = pd.DataFrame(overnight_open_trades, columns=['Symbol', 'Buy Price', 'Sell Price', 'Quantity', 'Profit/Loss', 'PL%', 'Status'])
+        overnight_closed_df = pd.DataFrame(overnight_closed_trades, columns=['Symbol', 'Buy Price', 'Sell Price', 'Quantity', 'Profit/Loss', 'PL%', 'Status'])
 
-        return closed_df, open_df, overnight_open_df
+        return closed_df, open_df, overnight_open_df, overnight_closed_df
 
     except Exception as e:
         print(f"An error occurred in profit calculation: {e}")
-        return pd.DataFrame(), pd.DataFrame(), pd.DataFrame()
+        return pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), pd.DataFrame()
 
 def process_data():
     try:
@@ -166,7 +138,7 @@ def process_data():
         print(positions_df.head())
 
         # Calculate profit and create DataFrames
-        closed_df, open_df, overnight_open_df = calculate_profit(orders_df, positions_df)
+        closed_df, open_df, overnight_open_df, overnight_closed_df = calculate_profit(orders_df, positions_df)
 
         # Print DataFrames
         print("Closed Orders:")
@@ -175,14 +147,15 @@ def process_data():
         print(open_df)
         print("\nOvernight Open Positions:")
         print(overnight_open_df)
+        print("\nOvernight Closed Positions:")
+        print(overnight_closed_df)
 
-        return closed_df, open_df, overnight_open_df
+        return closed_df, open_df, overnight_open_df, overnight_closed_df
 
     except Exception as e:
         print(f"An error occurred in processing data: {e}")
-        return pd.DataFrame(), pd.DataFrame(), pd.DataFrame()
+        return pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), pd.DataFrame()
 
 # Run the data processing function
 process_data()
-
 
