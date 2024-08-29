@@ -38,7 +38,7 @@ def calculate_profit(orders_df, positions_df):
 
             trade_data[symbol][order_type.lower()].append({'price': price, 'qty': qty})
 
-        # Create lists for different trade types
+        # Initialize lists for different trade types
         closed_trades = []
         open_trades = []
         overnight_open_trades = []
@@ -158,4 +158,5 @@ def process_data():
 
 # Run the data processing function
 process_data()
+
 
