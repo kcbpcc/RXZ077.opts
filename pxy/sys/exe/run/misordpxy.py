@@ -1,5 +1,3 @@
-import sys
-import traceback
 import pandas as pd
 from login_get_kite import get_kite, remove_token
 from cnstpxy import dir_path
@@ -22,7 +20,6 @@ def get_positionsinfo(resp_list):
 
 def calculate_profit(orders_df, positions_df):
     try:
-        # Create a dictionary to hold buy/sell orders
         trade_data = {}
 
         for index, row in orders_df.iterrows():
@@ -36,7 +33,6 @@ def calculate_profit(orders_df, positions_df):
 
             trade_data[symbol][order_type.lower()].append({'price': price, 'qty': qty})
 
-        # Create lists for different trade types
         closed_trades = []
         open_trades = []
         overnight_open_trades = []
@@ -62,7 +58,6 @@ def calculate_profit(orders_df, positions_df):
                         'Status': 'Closed'
                     })
             else:
-                # Handle overnight positions
                 if trades['buy']:
                     buy = trades['buy'][0]
                     profit_loss = f'₹{(ltp - buy["price"]) * buy["qty"]:.2f}' if ltp else '--'
@@ -87,7 +82,6 @@ def calculate_profit(orders_df, positions_df):
                             'Status': 'Overnight'
                         })
 
-        # Create DataFrames for different trade types
         closed_df = pd.DataFrame(closed_trades, columns=['Symbol', 'Buy Price', 'Sell Price', 'Quantity', 'Profit/Loss', 'PL%', 'Status'])
         open_df = pd.DataFrame(open_trades, columns=['Symbol', 'Buy Price', 'Sell Price', 'Quantity', 'Profit/Loss', 'PL%', 'Status'])
         overnight_open_df = pd.DataFrame(overnight_open_trades, columns=['Symbol', 'Buy Price', 'Sell Price', 'Quantity', 'Profit/Loss', 'PL%', 'Status'])
@@ -130,7 +124,7 @@ def process_data():
         # Update average_price in orders_df with values from positions_df
         for index, row in positions_df.iterrows():
             symbol = row['tradingsymbol']
-            avg_price = row['day_buy_price'] if row['day_buy_price'] > 0 else 0
+            avg_price = row['average_price'] if 'average_price' in row and row['average_price'] > 0 else 0
             if symbol in orders_df['tradingsymbol'].values:
                 orders_df.loc[orders_df['tradingsymbol'] == symbol, 'average_price'] = avg_price
 
@@ -141,7 +135,7 @@ def process_data():
             symbol = row['tradingsymbol']
             qty = row['overnight_quantity']
             if qty > 0:
-                avg_price = row['day_buy_price'] if row['day_buy_price'] > 0 else 0
+                avg_price = row['average_price'] if 'average_price' in row and row['average_price'] > 0 else 0
                 if symbol not in orders_df['tradingsymbol'].values:
                     overnight_positions_df = pd.concat([overnight_positions_df, pd.DataFrame([{
                         'tradingsymbol': symbol,
