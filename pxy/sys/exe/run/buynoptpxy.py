@@ -106,12 +106,12 @@ async def main():
                             avg_price = position['quantity'] * position['average_price']
                             if avg_price != 0:  # Check for division by zero
                                 qty_CE += int(abs(position['quantity']) / 25)
-                                CE_PLPREC = (combined_df['pnl'] / combined_df['buy_value'] * 100).round(2).astype(int)
+                                CE_PLPREC = (position['pnl'] / position['buy_value'] * 100).round(2).astype(int)
                         elif position['tradingsymbol'] == PE_symbol:
                             avg_price = position['quantity'] * position['average_price']
                             if avg_price != 0:  # Check for division by zero
                                 qty_PE += int(abs(position['quantity']) / 25)
-                                PE_PLPREC = (combined_df['pnl'] / combined_df['buy_value'] * 100).round(2).astype(int)
+                                PE_PLPREC = (position['pnl'] / position['buy_value'] * 100).round(2).astype(int)
                 
                     return qty_CE, qty_PE, CE_PLPREC, PE_PLPREC
                 qty_CE, qty_PE,CE_PLPREC,PE_PLPREC = qty_positions_by_type(broker, CE_symbol, PE_symbol)
