@@ -22,12 +22,24 @@ def get_ordersinfo(orders):
         print(f"An error occurred in fetching orders: {e}")
         return pd.DataFrame()
 
-def calculate_profit(df):
+def get_positionsinfo(positions):
+    try:
+        if positions:  # Check if the positions list is not empty
+            df = pd.DataFrame(positions)
+            df = df[['tradingsymbol', 'last_price']]  # Extract only relevant columns
+            return df
+        else:
+            return pd.DataFrame()  # Return an empty DataFrame if no data
+    except Exception as e:
+        print(f"An error occurred in fetching positions: {e}")
+        return pd.DataFrame()
+
+def calculate_profit(orders_df, positions_df):
     try:
         # Create a dictionary to hold buy/sell orders
         trade_data = {}
 
-        for index, row in df.iterrows():
+        for index, row in orders_df.iterrows():
             symbol = row['tradingsymbol']
             qty = row['quantity']
             price = row['average_price']
@@ -42,16 +54,19 @@ def calculate_profit(df):
         result = []
 
         for symbol, trades in trade_data.items():
+            ltp = positions_df.loc[positions_df['tradingsymbol'] == symbol, 'last_price'].values[0]
+
             if trades['buy'] and trades['sell']:
                 buy = trades['buy'][0]
                 sell = trades['sell'][0]
-                
+
                 if buy['qty'] == sell['qty']:
                     pnl = (sell['price'] - buy['price']) * buy['qty']
                     result.append({
                         'Symbol': symbol,
                         'Buy Price': buy['price'],
                         'Sell Price': sell['price'],
+                        'LTP': ltp,
                         'Quantity': buy['qty'],
                         'Profit/Loss': pnl,
                         'Status': 'Closed'
@@ -60,12 +75,18 @@ def calculate_profit(df):
                     # Handle mismatched quantities if required
                     pass
             else:
+                # If only buy order exists, calculate unrealized profit/loss
+                if trades['buy']:
+                    pnl = (ltp - trades['buy'][0]['price']) * trades['buy'][0]['qty']
+                else:
+                    pnl = None
                 result.append({
                     'Symbol': symbol,
                     'Buy Price': trades['buy'][0]['price'] if trades['buy'] else None,
                     'Sell Price': trades['sell'][0]['price'] if trades['sell'] else None,
+                    'LTP': ltp,
                     'Quantity': trades['buy'][0]['qty'] if trades['buy'] else trades['sell'][0]['qty'],
-                    'Profit/Loss': None,
+                    'Profit/Loss': pnl,
                     'Status': 'Open'
                 })
 
@@ -97,8 +118,16 @@ def process_data():
             print("No completed orders available.")
             return pd.DataFrame()
 
-        # Calculate profit or loss
-        profit_df = calculate_profit(orders_df)
+        # Retrieve positions using the Kite Connect API
+        positions_response = broker.kite.positions().get('net', [])
+        positions_df = get_positionsinfo(positions_response)
+
+        if positions_df.empty:  # Check if positions_df is empty
+            print("No positions available.")
+            return pd.DataFrame()
+
+        # Calculate profit or loss using positions' last prices
+        profit_df = calculate_profit(orders_df, positions_df)
 
         # Print the result
         print(profit_df)
