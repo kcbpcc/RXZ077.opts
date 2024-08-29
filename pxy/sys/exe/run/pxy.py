@@ -203,7 +203,7 @@ while True:
     elif run_type == 'l':
         subprocess.run(['python3', 'cntrloptprntpxy.pyc', 'l'])
     print("━" * 42)
-    subprocess.run(['python3', 'misordpxy.py.pyc'])
+    subprocess.run(['python3', 'misordpxy.pyc'])
     subprocess.run(['python3', 'selfpxy.pyc'])
     
     progress_bar(cycle, (mktpxy if peak in ["PEAKSART", "PEAKEND", "NONPEAK"] else None))
