@@ -27,6 +27,12 @@ def calculate_profit(orders_df, positions_df):
         # Create a dictionary to hold buy/sell orders
         trade_data = {}
 
+        # Ensure DataFrames are not empty
+        if orders_df.empty:
+            print("Orders DataFrame is empty")
+        if positions_df.empty:
+            print("Positions DataFrame is empty")
+
         for index, row in orders_df.iterrows():
             symbol = row['tradingsymbol']
             qty = row['quantity']
@@ -45,7 +51,9 @@ def calculate_profit(orders_df, positions_df):
         overnight_closed_trades = []
 
         for symbol, trades in trade_data.items():
-            ltp = positions_df.loc[positions_df['tradingsymbol'] == symbol, 'last_price'].values[0] if not positions_df.empty else None
+            # Extract last price from positions DataFrame
+            ltp = positions_df.loc[positions_df['tradingsymbol'] == symbol, 'last_price'].values
+            ltp = ltp[0] if len(ltp) > 0 else None
 
             if trades['buy'] and trades['sell']:
                 buy = trades['buy'][0]
@@ -65,15 +73,18 @@ def calculate_profit(orders_df, positions_df):
                     })
             else:
                 # Handle overnight positions
-                if trades['buy']:
-                    buy = trades['buy'][0]
-                    profit_loss = f'₹{(ltp - buy["price"]) * buy["qty"]:.2f}' if ltp else '--'
+                overnight_row = positions_df[positions_df['tradingsymbol'] == symbol].iloc[0]
+                overnight_qty = overnight_row['overnight_quantity']
+                average_price = overnight_row['day_buy_price']
+
+                if overnight_qty > 0:
+                    profit_loss = f'₹{(ltp - average_price) * overnight_qty:.2f}' if ltp else '--'
                     if ltp:
                         overnight_open_trades.append({
                             'Symbol': symbol,
-                            'Buy Price': buy['price'],
+                            'Buy Price': average_price,
                             'Sell Price': '--',
-                            'Quantity': buy['qty'],
+                            'Quantity': overnight_qty,
                             'Profit/Loss': profit_loss,
                             'PL%': '--',
                             'Status': 'Open'
@@ -81,9 +92,9 @@ def calculate_profit(orders_df, positions_df):
                     else:
                         overnight_closed_trades.append({
                             'Symbol': symbol,
-                            'Buy Price': buy['price'],
+                            'Buy Price': average_price,
                             'Sell Price': '--',
-                            'Quantity': buy['qty'],
+                            'Quantity': overnight_qty,
                             'Profit/Loss': '--',
                             'PL%': '--',
                             'Status': 'Overnight'
@@ -158,5 +169,4 @@ def process_data():
 
 # Run the data processing function
 process_data()
-
 
