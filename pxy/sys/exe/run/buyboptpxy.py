@@ -110,12 +110,12 @@ async def main():
                             avg_price = position['quantity'] * position['average_price']
                             if avg_price != 0:  # Check for division by zero
                                 qty_CE += int(abs(position['quantity']) / 15)
-                                CE_PLPREC = int(((position['quantity'] * position['last_price']) - (position['quantity'] * position['average_price'])) / avg_price * 100)
+                                CE_PLPREC = int(position['pnl'] / position['buy_value'] * 100)
                         elif position['tradingsymbol'] == PE_symbol:
                             avg_price = position['quantity'] * position['average_price']
                             if avg_price != 0:  # Check for division by zero
                                 qty_PE += int(abs(position['quantity']) / 15)
-                                PE_PLPREC = int(((position['quantity'] * position['last_price']) - (position['quantity'] * position['average_price'])) / avg_price * 100)
+                                PE_PLPREC = int(position['pnl'] / position['buy_value'] * 100)
                 
                     return qty_CE, qty_PE, CE_PLPREC, PE_PLPREC
                 qty_CE, qty_PE,CE_PLPREC,PE_PLPREC = qty_positions_by_type(broker, CE_symbol, PE_symbol)
@@ -156,7 +156,7 @@ async def main():
                     elif mktpxy == "Sell":
                         if bnk_power > 0.70:
                             if PE_position_exists:
-                                if PE_PLPREC < -7 and qty_PE < 3:
+                                if PE_PLPREC < -3 and qty_PE < 3:
                                     print(f"{PE_symbol} is there,But {BRIGHT_RED}Re-Buy{RESET}")
                                     await place_order(broker, PE_symbol, 'BUY', 'MIS', 15, 'MARKET')
                                 else:
@@ -171,7 +171,7 @@ async def main():
                     if mktpxy == "Buy":
                         if bnk_power < 0.30:
                             if CE_position_exists:
-                                if CE_PLPREC < -7 and qty_CE < 3:
+                                if CE_PLPREC < -3 and qty_CE < 3:
                                     print(f"{CE_symbol} is there,But {BRIGHT_RED}Re-Buy{RESET}")
                                     await place_order(broker, CE_symbol, 'BUY', 'NRML', 15, 'MARKET')
                                 else:
