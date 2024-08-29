@@ -4,7 +4,6 @@ import pandas as pd
 from login_get_kite import get_kite, remove_token
 from cnstpxy import dir_path
 from toolkit.logger import Logger
-import os
 
 # Setup logging
 logger = Logger(30, dir_path + "main.log")
@@ -129,21 +128,26 @@ def process_data():
             orders_df = pd.DataFrame(columns=['tradingsymbol', 'quantity', 'average_price', 'transaction_type'])
 
         # Add overnight positions to orders_df
+        overnight_positions_df = pd.DataFrame(columns=['tradingsymbol', 'quantity', 'average_price', 'transaction_type'])
+
         for index, row in positions_df.iterrows():
             symbol = row['tradingsymbol']
             qty = row['overnight_quantity']
             if qty > 0:
                 avg_price = row['day_buy_price'] if row['day_buy_price'] > 0 else 0
                 if symbol not in orders_df['tradingsymbol'].values:
-                    orders_df = orders_df.append({
+                    overnight_positions_df = pd.concat([overnight_positions_df, pd.DataFrame([{
                         'tradingsymbol': symbol,
                         'quantity': qty,
                         'average_price': avg_price,
                         'transaction_type': 'BUY'
-                    }, ignore_index=True)
+                    }])], ignore_index=True)
                 else:
                     # Update existing entry if already present
                     orders_df.loc[orders_df['tradingsymbol'] == symbol, 'quantity'] += qty
+
+        # Combine existing orders_df with new overnight positions
+        orders_df = pd.concat([orders_df, overnight_positions_df], ignore_index=True)
 
         # Print DataFrames for debugging
         print("Orders DataFrame:")
@@ -172,3 +176,4 @@ def process_data():
 
 # Run the data processing function
 process_data()
+
