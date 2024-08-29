@@ -74,34 +74,14 @@ def calculate_profit(orders_df, positions_df):
                         'Status': 'Open'
                     })
 
-        # Adding dummy trades to positions_df for further calculations
-        overnight_df = pd.DataFrame(overnight_trades)
-        all_trades_df = pd.concat([orders_df, overnight_df], ignore_index=True)
-
-        # Process open trades again to separate them from the dummy overnight trades
-        for symbol, trades in trade_data.items():
-            ltp = positions_df.loc[positions_df['tradingsymbol'] == symbol, 'last_price'].values[0] if not positions_df.empty else None
-
-            if trades['buy'] and not trades['sell']:
-                # If only buy order exists, calculate unrealized profit/loss
-                buy = trades['buy'][0]
-                pnl = (ltp - buy['price']) * buy['qty'] if ltp else None
-                pl_percent = (pnl / (buy['price'] * buy['qty'])) * 100 if pnl else None
-                open_trades.append({
-                    'Symbol': symbol,
-                    'Buy Price': buy['price'],
-                    'Sell Price': '--',
-                    'Quantity': buy['qty'],
-                    'Profit/Loss': f'₹{pnl:.2f}' if pnl else '--',
-                    'Status': 'Open'
-                })
-
+        # Create DataFrames for different trade types
         closed_df = pd.DataFrame(closed_trades)
         open_df = pd.DataFrame(open_trades)
+        overnight_df = pd.DataFrame(overnight_trades)
 
         return closed_df[['Symbol', 'Buy Price', 'Sell Price', 'Quantity', 'Profit/Loss', 'Status']], \
                open_df[['Symbol', 'Buy Price', 'Sell Price', 'Quantity', 'Profit/Loss', 'Status']], \
-               all_trades_df[['tradingsymbol', 'average_price', 'quantity', 'transaction_type']]
+               overnight_df[['Symbol', 'Buy Price', 'Sell Price', 'Quantity', 'Profit/Loss', 'Status']]
 
     except Exception as e:
         print(f"An error occurred in profit calculation: {e}")
@@ -144,17 +124,17 @@ def process_data():
         print(positions_df.head())
 
         # Calculate profit and create DataFrames
-        closed_df, open_df, all_trades_df = calculate_profit(orders_df, positions_df)
+        closed_df, open_df, overnight_df = calculate_profit(orders_df, positions_df)
 
         # Print DataFrames
         print("Closed Orders:")
         print(closed_df)
         print("\nOpen Orders:")
         print(open_df)
-        print("\nAll Trades (Including Overnight):")
-        print(all_trades_df)
+        print("\nOvernight Positions Only:")
+        print(overnight_df)
 
-        return closed_df, open_df, all_trades_df
+        return closed_df, open_df, overnight_df
 
     except Exception as e:
         print(f"An error occurred in processing data: {e}")
@@ -162,6 +142,3 @@ def process_data():
 
 # Run the data processing function
 process_data()
-
-
-
