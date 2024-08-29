@@ -39,9 +39,9 @@ def calculate_profit(orders_df, positions_df):
             trade_data[symbol][order_type.lower()].append({'price': price, 'qty': qty})
 
         # Create lists for different trade types
-        overnight_trades = []
         closed_trades = []
         open_trades = []
+        overnight_trades = []
 
         for symbol, trades in trade_data.items():
             ltp = positions_df.loc[positions_df['tradingsymbol'] == symbol, 'last_price'].values[0] if not positions_df.empty else None
@@ -59,6 +59,7 @@ def calculate_profit(orders_df, positions_df):
                         'Sell Price': sell['price'],
                         'Quantity': buy['qty'],
                         'Profit/Loss': f'₹{pnl:.2f}',
+                        'PL%': f'{pl_percent:.2f}%',
                         'Status': 'Closed'
                     })
             else:
@@ -71,6 +72,7 @@ def calculate_profit(orders_df, positions_df):
                         'Sell Price': '--',
                         'Quantity': buy['qty'],
                         'Profit/Loss': f'₹{(ltp - buy['price']) * buy['qty']:.2f}' if ltp else '--',
+                        'PL%': '--',
                         'Status': 'Open'
                     })
 
@@ -79,9 +81,9 @@ def calculate_profit(orders_df, positions_df):
         open_df = pd.DataFrame(open_trades)
         overnight_df = pd.DataFrame(overnight_trades)
 
-        return closed_df[['Symbol', 'Buy Price', 'Sell Price', 'Quantity', 'Profit/Loss', 'Status']], \
-               open_df[['Symbol', 'Buy Price', 'Sell Price', 'Quantity', 'Profit/Loss', 'Status']], \
-               overnight_df[['Symbol', 'Buy Price', 'Sell Price', 'Quantity', 'Profit/Loss', 'Status']]
+        return closed_df[['Symbol', 'Buy Price', 'Sell Price', 'Quantity', 'Profit/Loss', 'PL%','Status']], \
+               open_df[['Symbol', 'Buy Price', 'Sell Price', 'Quantity', 'Profit/Loss', 'PL%','Status']], \
+               overnight_df[['Symbol', 'Buy Price', 'Sell Price', 'Quantity', 'Profit/Loss', 'PL%','Status']]
 
     except Exception as e:
         print(f"An error occurred in profit calculation: {e}")
@@ -131,7 +133,7 @@ def process_data():
         print(closed_df)
         print("\nOpen Orders:")
         print(open_df)
-        print("\nOvernight Positions Only:")
+        print("\nOvernight Positions:")
         print(overnight_df)
 
         return closed_df, open_df, overnight_df
