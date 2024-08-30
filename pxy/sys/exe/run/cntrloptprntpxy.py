@@ -185,12 +185,12 @@ green_Stocks_capital_percentage = (green_Stocks_profit_loss / total_invested) * 
 output_lines.append(left_aligned_format.format(f"F&O-tCap:{BRIGHT_YELLOW}{str(round(total_invested_all / 100000, 2)).zfill(5)}{RESET}") +
                     right_aligned_format.format(f"F&O-tPnL:{BRIGHT_GREEN if run_opnl > 0 else BRIGHT_RED}{str(round(run_opnl / 100000, 2)).zfill(5)}{RESET}"))
 #output_lines.append(left_aligned_format.format(
-        #f"Cash Now:{BRIGHT_GREEN if live_balance > 50000 else BRIGHT_YELLOW}{int(round(live_balance, 0)):06d}{RESET}") +
+        #f"Cash-Now:{BRIGHT_GREEN if live_balance > 50000 else BRIGHT_YELLOW}{int(round(live_balance, 0)):06d}{RESET}") +
         #right_aligned_format.format(
         #f"Flush:{BRIGHT_GREEN if green_Stocks_capital_percentage > 0 else BRIGHT_RED}{str(round(green_Stocks_capital_percentage, 2)).zfill(4)}% {int(green_Stocks_profit_loss / 1000)}K{RESET}"))
 output_lines.append(
     left_aligned_format.format(
-        f"Cash Now:{BRIGHT_GREEN if cashround > 50000 else BRIGHT_YELLOW}{round(cashround, 2):05.2f}{RESET}"
+        f"Cash-Now:{BRIGHT_GREEN if cashround > 50000 else BRIGHT_YELLOW}{round(cashround, 2):05.2f}{RESET}"
     ) + 
     right_aligned_format.format(
         f"{current_month_abbr}:{month_loss_percentage}:{BRIGHT_GREEN if month_opts_total_value > 0 else BRIGHT_RED}{str(month_opts_total_value).zfill(5)}{RESET}"        
