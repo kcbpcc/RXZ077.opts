@@ -137,9 +137,9 @@ async def main():
                                 print(f"    {CE_symbol} is there, But {BRIGHT_RED}Re-Buy{RESET}")
                                 await place_order(broker, CE_symbol, 'BUY', 'MIS', 15, 'MARKET')
                             else:
-                                print(f"    {CE_symbol} is there, let's {BRIGHT_YELLOW}skip{RESET}")
+                                print(f"{CE_symbol} is there, let's {BRIGHT_YELLOW}skip{RESET}")
                         else:
-                            print(f"    {CE_symbol} not there, let's Buy")
+                            print(f"{CE_symbol} not there, let's Buy")
                             await process_orders(broker, available_cash, CE_position_exists, False, CE_symbol, None, count_CE, count_PE, mktpxy)
                 
                     elif mktpxy == "Sell":
@@ -148,9 +148,9 @@ async def main():
                                 print(f"    {PE_symbol} is there, But {BRIGHT_RED}Re-Buy{RESET}")
                                 await place_order(broker, PE_symbol, 'BUY', 'MIS', 15, 'MARKET')
                             else:
-                                print(f"    {PE_symbol} is there, let's {BRIGHT_YELLOW}skip{RESET}")
+                                print(f"{PE_symbol} is there, let's {BRIGHT_YELLOW}skip{RESET}")
                         else:
-                            print(f"    {PE_symbol} not there, let's Buy")
+                            print(f"{PE_symbol} not there, let's Buy")
                             await process_orders(broker, available_cash, False, PE_position_exists, None, PE_symbol, count_CE, count_PE, mktpxy)
 
                 elif bmktpredict == "RISE":
