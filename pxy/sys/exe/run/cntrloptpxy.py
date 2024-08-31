@@ -18,6 +18,13 @@ from clorpxy import (SILVER, UNDERLINE, RED, GREEN, YELLOW, RESET, BRIGHT_YELLOW
 # Set up logging
 logging.basicConfig(filename='error.log', level=logging.ERROR)
 
+# Define the arrow_map for visual indicators
+arrow_map = {
+    'up': '↑',
+    'down': '↓',
+    'side': '→'  # Example, modify according to your needs
+}
+
 def calculate_totals(combined_df):
     if combined_df.empty:
         return 0
@@ -172,16 +179,7 @@ def main():
                     return 10
 
             exe_opt_df['tgtoptsmadepth'] = exe_opt_df.apply(compute_depth, axis=1)
-
-            if peak != 'PEAKSTART':
-                exit_options(exe_opt_df, broker)
-        else:
-            print("No matching options available in combined_df.")
-    else:
-        print("No positions available.")
-
-if __name__ == "__main__":
-    main()
+            exit_options(exe_opt_df, broker)
 
 
 #############################################################################################################################################################################################################################
