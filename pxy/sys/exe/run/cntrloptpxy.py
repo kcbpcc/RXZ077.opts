@@ -14,10 +14,12 @@ from depthpxy import calculate_consecutive_candles
 from mktpxy import get_market_check
 from predictpxy import predict_market_sentiment
 from bpredictpxy import predict_bnk_sentiment
+
 mktpredict = predict_market_sentiment()
 bmktpredict = predict_bnk_sentiment()
 bonemincandlesequance, bmktpxy = get_market_check('^NSEBANK')
 nonemincandlesequance, nmktpxy = get_market_check('^NSEI')
+
 from clorpxy import SILVER, UNDERLINE, RED, GREEN, YELLOW, RESET, BRIGHT_YELLOW, BRIGHT_RED, BRIGHT_GREEN, BOLD, GREY
 
 bsma = check_index_status('^NSEBANK')
@@ -29,7 +31,6 @@ ncedepth, npedepth = calculate_consecutive_candles("^NSEI")
 ndpt = ncedepth + npedepth - 1
 bdpt = bcedepth + bpedepth - 1
 
-
 column_width = 30
 left_aligned_format = "{:<" + str(column_width) + "}"
 right_aligned_format = "{:>" + str(column_width) + "}"
@@ -38,15 +39,14 @@ output_lines.append(left_aligned_format.format(f"BNK ━━━━> {BRIGHT_GREEN
                     right_aligned_format.format(f"{ndpt} {BRIGHT_GREEN if mktpredict == 'RISE' else BRIGHT_RED if mktpredict == 'FALL' else BRIGHT_YELLOW}{arrow_map.get(nmktpxy, '')} {mktpredict}{RESET} <━━━━ NFT")) 
 full_output = '\n'.join(output_lines)
 print(full_output)
+
 bot_token = '7314363024:AAF-tihNsblqbhQqSaCzdRcjd-ySshpo7BY'
 user_usernames = ('-4583314804',)
 
 def calculate_totals(combined_df):
     if not combined_df.empty:
         extras_df = combined_df[(combined_df['exchange'] == 'NFO') & (combined_df['sell_quantity'] > 0)].copy()
-        #total_opt_pnl = int(extras_df['unrealised'].sum())
         total_opt_pnl = int(extras_df['unrealised'].sum()) + ((-1) * int(extras_df['PnL'].sum()))
-        #print(total_opt_pnl)
     else:
         total_opt_pnl = 0
     return total_opt_pnl
@@ -74,7 +74,7 @@ def place_order(tradingsymbol, quantity, transaction_type, order_type, product, 
             order_type=order_type,
             product=product
         )
-        if order_id:  # Check if order_id is valid
+        if order_id:
             print(f"Order placed successfully. Order ID: {order_id}")
             send_telegram_message(message)
             return order_id
@@ -143,11 +143,10 @@ def compute_tgtoptsma(row):
 
 exe_opt_df['tgtoptsma'] = exe_opt_df.apply(compute_tgtoptsma, axis=1)
 
-
 from vixpxy import get_vixpxy
 n_vix, b_vix = get_vixpxy()
-nvix = 1 # n_vix / 2
-bvix = 1 #b_vix / 2
+nvix = 1  # n_vix / 2
+bvix = 1  # b_vix / 2
 
 def compute_depth(row):
     try:
@@ -188,15 +187,12 @@ def compute_depth(row):
         else:
             return 10
     except Exception as e:
-        # Optionally log the exception e here
         return 10
-
 
 exe_opt_df['tgtoptsmadepth'] = exe_opt_df.apply(compute_depth, axis=1)
 
-if peak != 'PEAKSTART':
+if peak != 'PEAKSTART' and 'exit_options' in globals():
     exit_options(exe_opt_df, broker)
-
 
 #############################################################################################################################################################################################################################
 import numpy as np
