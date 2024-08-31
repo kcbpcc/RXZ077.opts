@@ -1,0 +1,2 @@
+tradingsymbol,exchange,instrument_token,product,quantity,overnight_quantity,overnight_price,overnight_value,multiplier,average_price,close_price,last_price,value,pnl,m2m,unrealised,realised,buy_quantity,buy_price,buy_value,buy_m2m,sell_quantity,sell_price,sell_value,sell_m2m,day_buy_quantity,day_buy_price,day_buy_value,day_sell_quantity,day_sell_price,day_sell_value,source
+PXYNIFTY24SEP49900PE,NFO,10329858,NRML,15,15,0,15672.75,1,1044.85,207.25,211.95,-15672.75,-12493.5,70.5,-12493.5,0,15,1044.85,15672.75,3108.75,0,0,0,0,0,0,0,0,0,0,positions
