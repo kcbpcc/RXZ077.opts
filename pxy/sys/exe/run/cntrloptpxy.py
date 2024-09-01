@@ -121,10 +121,17 @@ finally:
         sys.stdout = sys.__stdout__
 
 combined_df = process_data()
+
+# Check if combined_df is empty
+if combined_df.empty:
+    print("No data available. Exiting...")
+    exit()  # Exit the program
+
 exe_opt_df = combined_df[combined_df['key'].str.contains('NFO:', case=False)].copy()
 exe_opt_df['key'] = exe_opt_df['key'].str.replace('NFO:', '') 
 exe_opt_df['PL%'] = ((exe_opt_df['pnl'] / exe_opt_df['buy_value']) * 100).round(2)
 exe_opt_df['strike'] = exe_opt_df['key'].str.replace(r'(PE|CE)$', '', regex=True)
+
 
 def compute_tgtoptsma(row):
     global bsma
