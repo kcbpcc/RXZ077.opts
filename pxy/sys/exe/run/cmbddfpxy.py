@@ -38,8 +38,11 @@ def process_data():
     try:
         positions_response = broker.kite.positions().get('net', [])
         positions_df = get_positionsinfo(positions_response)
+        
+        if positions_df.empty:  # Check if positions_df is empty
+            #print("No positions available.")
+            return pd.DataFrame()
 
-        # Removed the empty DataFrame check
         positions_df.to_csv('pxypositions.csv', index=False)
         combined_df = positions_df.reset_index(drop=True)
         combined_df['key'] = combined_df['exchange'] + ":" + combined_df['tradingsymbol']
@@ -64,4 +67,3 @@ def process_data():
 
 if __name__ == "__main__":
     process_data()
-
