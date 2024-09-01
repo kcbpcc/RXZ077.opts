@@ -123,7 +123,7 @@ combined_df = process_data()
 
 # Check if combined_df is empty
 if combined_df.empty:
-    print("No data available. Exiting...")
+    print("Game not started yet. Let's wait for a while.⏳")
     exit()  # Exit the program
 
 exe_opt_df = combined_df[combined_df['key'].str.contains('NFO:', case=False)].copy()
