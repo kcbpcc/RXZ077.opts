@@ -1,4 +1,3 @@
-print("━" * 42)
 import numpy as np
 import sys
 import traceback
