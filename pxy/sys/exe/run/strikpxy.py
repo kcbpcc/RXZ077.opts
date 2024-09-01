@@ -5,7 +5,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 def get_14_day_sma(symbol):
-    data = yf.Ticker(symbol).history(period="30d", interval="1d")  # Fetch 30 days of data
+    data = yf.Ticker(symbol).history(period="1mo", interval="1d")  # Fetch 1 month of data
     sma_14 = data['Close'].rolling(window=14).mean().iloc[-1]  # Calculate the 14-day SMA
     return sma_14
 
