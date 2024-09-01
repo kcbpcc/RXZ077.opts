@@ -23,11 +23,6 @@ def get_prices():
                                     
     return BCE_Strike, CE_Strike, PE_Strike, BPE_Strike
 
-# Example usage
-BCE_Strike, CE_Strike, PE_Strike, BPE_Strike = get_prices()
-print("BCE Strike:", BCE_Strike)
-print("CE Strike:", CE_Strike)
-print("PE Strike:", PE_Strike)
-print("BPE Strike:", BPE_Strike)
+
 
 
