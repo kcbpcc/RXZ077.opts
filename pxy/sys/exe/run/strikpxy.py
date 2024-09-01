@@ -6,7 +6,7 @@ warnings.filterwarnings("ignore")
 
 def get_14_day_sma(symbol):
     data = yf.Ticker(symbol).history(period="1mo", interval="1d")  # Fetch 1 month of data
-    sma_14 = data['Close'].rolling(window=14).mean().iloc[-1]  # Calculate the 14-day SMA
+    sma_14 = data['Close'].rolling(window=7).mean().iloc[-1]  # Calculate the 14-day SMA
     return sma_14
 
 def round_to_nearest_500(price):
