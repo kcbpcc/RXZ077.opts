@@ -111,7 +111,7 @@ total_pl_percentage = (total_pl / total_invested) * 100 if total_invested != 0 e
 # For calculating 'run_opnl'
 run_opnl = combined_df[(combined_df['exchange'] == 'NFO')]['pnl'].sum()
 CnC_tCap_rounded = round(combined_df.loc[(combined_df['product'] == 'CNC') & (combined_df['qty'] > 0), 'Invested'].sum() / 100000, 2)
-m2m_opt = combined_df[(combined_df['exchange'] == 'NFO')]['m2m'].sum()
+m2m_opt = combined_df[(combined_df['exchange'] == 'NFO')]['pnl'].sum()
 
 # For calculating 'run_spnl'
 run_spnl = combined_df[(combined_df['qty'] > 0) & (combined_df['product'] == 'CNC') & (combined_df['source'] == 'holdings')]['pnl'].sum()
