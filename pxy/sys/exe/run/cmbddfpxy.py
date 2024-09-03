@@ -43,22 +43,38 @@ def process_data():
             #print("No positions available.")
             return pd.DataFrame()
 
+        # Assuming positions_df is already defined and populated
         positions_df.to_csv('pxypositions.csv', index=False)
         combined_df = positions_df.reset_index(drop=True)
+        
         combined_df['key'] = combined_df['exchange'] + ":" + combined_df['tradingsymbol']
         combined_df['ltp'] = combined_df['last_price']
         combined_df['close'] = combined_df['close_price']
         combined_df['qty'] = combined_df['quantity']
-        combined_df['pnl'] = combined_df.get('pnl', 0).astype(int)
-        combined_df['avg'] = combined_df.get('average_price', 0)
-        combined_df['Invested'] = (combined_df['qty'] * combined_df['avg']).round(0).astype(int)
+        
+        # Handle potential NaN values and convert to int
+        combined_df['pnl'] = combined_df.get('pnl', 0).fillna(0).astype(int)
+        
+        combined_df['avg'] = combined_df.apply(
+            lambda row: row.get('average_price', 0) if row.get('day_sell_quantity', 0) == 0 
+            else row.get('day_buy_price', 0), axis=1
+        )
+        
+        combined_df['Invested'] = (combined_df['qty'] * combined_df['avg']).round(0).fillna(0).astype(int)
         combined_df['value'] = combined_df['qty'] * combined_df['ltp']
-        combined_df['PnL'] = (combined_df['value'] - combined_df['Invested']).astype(int)
-        combined_df['PL%'] = ((combined_df['pnl'] / combined_df['buy_value']) * 100).round(2)
+        combined_df['PnL'] = (combined_df['value'] - combined_df['Invested']).fillna(0).astype(int)
+        
+        # Avoid division by zero in PL% calculation
+        combined_df['PL%'] = combined_df.apply(
+            lambda row: (row['PnL'] / row['Invested']) * 100 if row['Invested'] != 0 else 0, axis=1
+        )
+        
         combined_df['Yvalue'] = combined_df['qty'] * combined_df['close']
         combined_df['dPnL'] = combined_df['value'] - combined_df['Yvalue']
+        
         combined_df.to_csv('pxycombined.csv', index=False)
         return combined_df
+
 
     except Exception as e:
         print(f"An error occurred: {e}")
