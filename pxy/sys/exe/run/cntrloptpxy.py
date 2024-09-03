@@ -171,7 +171,7 @@ def compute_depth(row):
             if bcedepth > 1:
                 return max(3, (9 - bcedepth))
             elif bpedepth > 1:
-                return 10
+                return 5
             else:
                 return 10
 
@@ -179,7 +179,7 @@ def compute_depth(row):
             if bpedepth > 1:
                 return max(3, (9 - bpedepth))
             elif bcedepth > 1:
-                return 10
+                return 5
             else:
                 return 10
 
@@ -187,7 +187,7 @@ def compute_depth(row):
             if ncedepth > 1:
                 return max(3, (9 - ncedepth))
             elif npedepth > 1:
-                return 10
+                return 5
             else:
                 return 10
 
@@ -195,7 +195,7 @@ def compute_depth(row):
             if npedepth > 1:
                 return max(3, (9 - npedepth))
             elif ncedepth > 1:
-                return 10
+                return 5
             else:
                 return 10
 
