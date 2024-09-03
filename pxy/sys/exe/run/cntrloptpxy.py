@@ -169,7 +169,7 @@ def compute_depth(row):
         
         if row['key'].endswith("CE") and row['key'].startswith("BANK"):
             if bcedepth > 1:
-                return max(3, (9 - bcedepth))
+                return max(3.9, (9 - bcedepth))
             elif bpedepth > 1:
                 return 5
             else:
@@ -177,7 +177,7 @@ def compute_depth(row):
 
         elif row['key'].endswith("PE") and row['key'].startswith("BANK"):
             if bpedepth > 1:
-                return max(3, (9 - bpedepth))
+                return max(3.9, (9 - bpedepth))
             elif bcedepth > 1:
                 return 5
             else:
@@ -185,7 +185,7 @@ def compute_depth(row):
 
         elif row['key'].endswith("CE") and row['key'].startswith("NIFTY"):
             if ncedepth > 1:
-                return max(3, (9 - ncedepth))
+                return max(3.9, (9 - ncedepth))
             elif npedepth > 1:
                 return 5
             else:
@@ -193,7 +193,7 @@ def compute_depth(row):
 
         elif row['key'].endswith("PE") and row['key'].startswith("NIFTY"):
             if npedepth > 1:
-                return max(3, (9 - npedepth))
+                return max(3.9, (9 - npedepth))
             elif ncedepth > 1:
                 return 5
             else:
