@@ -123,12 +123,22 @@ combined_df = process_data()
 
 # Check if combined_df is empty
 if combined_df.empty:
-    print("Game not started yet. wait for a while..⏳")
+    print("Game not started yet. Wait for a while..⏳")
     exit()  # Exit the program
 
+# Filter and process data
 exe_opt_df = combined_df[combined_df['key'].str.contains('NFO:', case=False)].copy()
-exe_opt_df['key'] = exe_opt_df['key'].str.replace('NFO:', '') 
-exe_opt_df['PL%'] = ((exe_opt_df['pnl'] / exe_opt_df['buy_value']) * 100).round(2)
+
+# Replace 'NFO:' in the 'key' column
+exe_opt_df['key'] = exe_opt_df['key'].str.replace('NFO:', '', regex=False) 
+
+# Ensure 'PL%' column exists in combined_df before assigning
+if 'PL%' in combined_df.columns:
+    exe_opt_df['PL%'] = combined_df['PL%']
+else:
+    print("'PL%' column not found in combined_df")
+
+# Create 'strike' column
 exe_opt_df['strike'] = exe_opt_df['key'].str.replace(r'(PE|CE)$', '', regex=True)
 
 
