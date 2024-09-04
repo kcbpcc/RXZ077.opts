@@ -142,9 +142,9 @@ async def main():
                             await process_orders(broker, available_cash, False, PE_position_exists, None, PE_symbol, count_CE, count_PE, mktpxy)
                     
                     elif mktpxy == "Sell":
-                        if nse_power > 0.10:
+                        if nse_power > 0.70:
                             if CE_position_exists:
-                                if (CE_PLPREC > 3 and qty_CE < 2) or (CE_PLPREC > 5 and qty_CE < 3) or (CE_PLPREC > 7 and qty_CE < 4):
+                                if (CE_PLPREC < -3 and qty_CE < 2) or (CE_PLPREC < -5 and qty_CE < 3) or (CE_PLPREC < -7 and qty_CE < 4):
                                     print(f"    {CE_symbol} is there, {BRIGHT_YELLOW}lets check{RESET}")
                                 else:
                                     print(f"    {CE_symbol} is there, {BRIGHT_RED}sell{RESET}")
