@@ -183,6 +183,7 @@ while True:
     subprocess.run(['python3', 'worldpxy.pyc']) if run_type == 'l' else None
     #subprocess.run(['python3', 'mngoptpxy.pyc']) #if (bnk_power > 0.85 or bnk_power < 0.15 or nse_power > 0.85 or nse_power < 0.15) else None
 ############################################"PXY® PreciseXceleratedYield Pvt Ltd™############################################     ############################################"PXY® PreciseXceleratedYield Pvt Ltd™############################################ 
+    # Only execute if the user is 'pxy'
     if user == 'pxy' and run_type == 'l':
         subprocess.run(['python3', 'niftychartpxy.pyc'])
         subprocess.run(['python3', 'daypxy.pyc'])
@@ -199,6 +200,8 @@ while True:
         if 'bsma' in locals():
             color = BRIGHT_GREEN if bsma == "up" else BRIGHT_RED if bsma == "down" else BRIGHT_YELLOW
             print(color + "ﮩ٨ﮩ٨ـﮩ٨ﮩ٨ـﮩ٨ـﮩﮩ٨BANKNIFTY٨ﮩ٨ـﮩ٨ـﮩﮩ٨ﮩ٨ـﮩ٨ﮩ٨" + RESET)
+    else:
+        print("Skipping execution as the user is not 'pxy'.")
 ############################################"PXY® PreciseXceleratedYield Pvt Ltd™############################################    ############################################"PXY® PreciseXceleratedYield Pvt Ltd™############################################ 
     subprocess.run(['python3', 'plpxy.pyc']) if peak == "PEAKEND" else None
     print("━" * 42)
