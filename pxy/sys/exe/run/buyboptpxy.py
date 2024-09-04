@@ -118,7 +118,7 @@ async def main():
                 print(f"{PE_symbol}  {(f'{qty_PE}x' if PE_position_exists else '')}{'🥚' if PE_position_exists else '🛒'}  {PE_PLPREC:4.2f}".rjust(41))
                 print(f"{CE_symbol}  {(f'{qty_CE}x' if CE_position_exists else '')}{'🥚' if CE_position_exists else '🛒'}  {CE_PLPREC:4.2f}".rjust(41))
                
-                if mktpredict == "SIDE":
+                if bmktpredict == "SIDE":
                     if mktpxy == "Buy":
                         if CE_position_exists:
                             print(f"    {CE_symbol} is there, let's {BRIGHT_YELLOW}skip{RESET}")
@@ -133,7 +133,7 @@ async def main():
                             print(f"    {PE_symbol} not there, let's Buy")
                             await process_orders(broker, available_cash, False, PE_position_exists, None, PE_symbol, count_CE, count_PE, mktpxy)
                 
-                elif mktpredict == "RISE":
+                elif bmktpredict == "RISE":
                     if mktpxy == "Buy":
                         if CE_position_exists:
                             print(f"    {CE_symbol} is there, let's {BRIGHT_YELLOW}skip{RESET}")
@@ -155,7 +155,7 @@ async def main():
                         else:
                             print(f"nse_power:{nse_power} is not high enough,{BRIGHT_YELLOW}skipping{RESET}")
                 
-                elif mktpredict == "FALL":
+                elif bmktpredict == "FALL":
                     if mktpxy == "Buy":
                         if nse_power < 0.30:
                             if CE_position_exists:
