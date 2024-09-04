@@ -103,15 +103,15 @@ async def main():
                 
                     for position in positions_net:
                         if position['tradingsymbol'] == CE_symbol:
-                            avg_price = position['quantity'] * position['average_price']
+                            avg_price = position['average_price'].where(position['day_sell_quantity'] == 0, position['day_buy_price'])
                             if avg_price != 0:  # Check for division by zero
                                 qty_CE += int(abs(position['quantity']) / 25)
-                                CE_PLPREC = int(position['pnl'] / position['buy_value'] * 100)
+                                CE_PLPREC = ((position['last_price'] - position['avg_price']) / position['last_price'] * 100).astype(int)
                         elif position['tradingsymbol'] == PE_symbol:
-                            avg_price = position['quantity'] * position['average_price']
+                            avg_price = position['average_price'].where(position['day_sell_quantity'] == 0, position['day_buy_price'])
                             if avg_price != 0:  # Check for division by zero
                                 qty_PE += int(abs(position['quantity']) / 25)
-                                PE_PLPREC = int(position['pnl'] / position['buy_value'] * 100)
+                                PE_PLPREC = ((position['last_price'] - position['avg_price']) / position['last_price'] * 100).astype(int)
                 
                     return qty_CE, qty_PE, CE_PLPREC, PE_PLPREC
                 qty_CE, qty_PE,CE_PLPREC,PE_PLPREC = qty_positions_by_type(broker, CE_symbol, PE_symbol)
