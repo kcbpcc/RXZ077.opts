@@ -71,7 +71,7 @@ showhand = hand(mktpxy)
 def construct_symbol(expiry_year, expiry_month, expiry_day, option_type):
     if len(expiry_month) == 2 and expiry_month.startswith("0"):
         expiry_month = expiry_month[1]
-    noptions = PE_Strike if option_type == "PE" else (CE_Strike if option_type == "CE" else None)
+    noptions = BPE_Strike if option_type == "PE" else (BCE_Strike if option_type == "CE" else None)
     if expiry_day is None:
         return f"BANKNIFTY{expiry_year}{expiry_month}{noptions}{option_type}"
     else:
@@ -102,7 +102,7 @@ async def main():
                 PE_weight = count_PE - count_CE
                 CE_weight = count_CE - count_PE
                 weight = abs(count_PE - count_CE)
-                strike_price = CE_Strike
+                strike_price = BCE_Strike
                 print(f"{BRIGHT_YELLOW}{count_PE:02} 📉:PE   ━━━━ {strike_price} | {showhand} ━━━━   CE:📈 {count_CE:02}{RESET}")
 
                 expiry_year, expiry_month, expiry_day = month_expiry_date()
