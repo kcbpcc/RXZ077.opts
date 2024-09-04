@@ -135,24 +135,41 @@ async def main():
                 
                 elif mktpredict == "RISE":
                     if mktpxy == "Buy":
-                        if PE_position_exists:
-                            print(f"    {PE_symbol} is there, let's {BRIGHT_YELLOW}skip{RESET}")
+                        if CE_position_exists:
+                            print(f"    {CE_symbol} is there, let's {BRIGHT_YELLOW}skip{RESET}")
                         else:
-                            print(f"    {PE_symbol} not there, let's Buy")
-                            await process_orders(broker, available_cash, False, PE_position_exists, None, PE_symbol, count_CE, count_PE, mktpxy)
+                            print(f"    {CE_symbol} not there, let's Buy")
+                            await process_orders(broker, available_cash, CE_position_exists, False, CE_symbol, None, count_CE, count_PE, mktpxy)
                     
                     elif mktpxy == "Sell":
                         if nse_power > 0.70:
+                            if PE_position_exists:
+                                if (PE_PLPREC < -3 and qty_PE < 2) or (PE_PLPREC < -5 and qty_PE < 3) or (PE_PLPREC < -7 and qty_PE < 4):
+                                    print(f"    {PE_symbol} is there,But {BRIGHT_RED}Re-Buy{RESET}")
+                                    await place_order(broker, PE_symbol, 'BUY', 'NRML', 25, 'MARKET')
+                                else:
+                                    print(f"    {PE_symbol} is there, let's {BRIGHT_YELLOW}skip{RESET}")
+                            else:
+                                print(f"    {PE_symbol} not there, let's Buy")
+                                await process_orders(broker, available_cash, False, PE_position_exists, None, PE_symbol, count_CE, count_PE, mktpxy)
+                        else:
+                            print(f"nse_power:{nse_power} is not high enough,{BRIGHT_YELLOW}skipping{RESET}")
+                
+                elif mktpredict == "FALL":
+                    if mktpxy == "Buy":
+                        if nse_power < 0.30:
                             if CE_position_exists:
                                 if (CE_PLPREC < -3 and qty_CE < 2) or (CE_PLPREC < -5 and qty_CE < 3) or (CE_PLPREC < -7 and qty_CE < 4):
-                                    print(f"    {CE_symbol} is there, {BRIGHT_YELLOW}lets check{RESET}")
+                                    print(f"    {CE_symbol} is there,But {BRIGHT_RED}Re-Buy{RESET}")
+                                    await place_order(broker, CE_symbol, 'BUY', 'NRML', 25, 'MARKET')
                                 else:
-                                    print(f"    {CE_symbol} is there, {BRIGHT_RED}sell{RESET}")
-                                    await process_orders(broker, available_cash, CE_position_exists, False, CE_symbol, None, count_CE, count_PE, mktpxy)
+                                    print(f"    {CE_symbol} is there, let's {BRIGHT_YELLOW}skip{RESET}")
                             else:
-                                print(f"    {CE_symbol} not there, {BRIGHT_YELLOW}lets check{RESET}")
+                                print(f"    {CE_symbol} not there, let's Buy")
                                 await process_orders(broker, available_cash, CE_position_exists, False, CE_symbol, None, count_CE, count_PE, mktpxy)
-                    
+                        else:
+                            print(f"nse_power:{nse_power} is not low enough,{BRIGHT_YELLOW}skipping{RESET}")
+                
                     elif mktpxy == "Sell":
                         if PE_position_exists:
                             print(f"    {PE_symbol} is there, let's {BRIGHT_YELLOW}skip{RESET}")
@@ -160,19 +177,21 @@ async def main():
                             print(f"    {PE_symbol} not there, let's Buy")
                             await process_orders(broker, available_cash, False, PE_position_exists, None, PE_symbol, count_CE, count_PE, mktpxy)
                 
-                else:
-                    print("    Market prediction is unclear. No action taken.")
 
             except Exception as e:
-                print(traceback.format_exc())
-                logging.error(f"{str(e)} - Error occurred during processing")
-                sys.exit(1)
+                print(f"Error: {e}")
+                logging.error(f"Error in main(): {e}")
 
-    except Exception as e:
-        print(traceback.format_exc())
-        logging.error(f"{str(e)} - Unexpected error in main")
-        sys.exit(1)
+    finally:
+        # Reset sys.stdout to its default value
+        pass
+        # sys.stdout = sys.__stdout__
 
-if __name__ == "__main__":
-    asyncio.run(main())
+async def run_main():
+    await main()
 
+# Run the asynchronous function using asyncio.run()
+def sync_main():
+    asyncio.run(run_main())
+
+sync_main()
