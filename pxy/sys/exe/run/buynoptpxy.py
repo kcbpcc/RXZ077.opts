@@ -1,4 +1,3 @@
-# final ...
 import traceback
 import sys
 import logging
@@ -17,9 +16,53 @@ from nftpxy import get_nse_action
 from predictpxy import predict_market_sentiment
 from clorpxy import SILVER, UNDERLINE, RED, GREEN, YELLOW, RESET, BRIGHT_YELLOW, BRIGHT_RED, BRIGHT_GREEN, BOLD, GREY
 from hndmktpxy import hand
+from cmbddfpxy import process_data
 
 # Configure logging
 logging.basicConfig(filename='error.log', level=logging.ERROR, format='%(asctime)s - %(levelname)s - %(message)s')
+
+import pandas as pd
+
+def qty_positions_by_type(positions_net, CE_symbol, PE_symbol, positions_df):
+    qty_CE = 0
+    qty_PE = 0
+    CE_PLPREC = 0  # Initialize P&L percentage for CE
+    PE_PLPREC = 0  # Initialize P&L percentage for PE
+
+    # Iterate over the positions
+    for position in positions_net:
+        # Find the corresponding row in the DataFrame
+        matching_row = positions_df[positions_df['tradingsymbol'] == position['tradingsymbol']]
+        
+        if not matching_row.empty:
+            # Use the PL% column directly from the DataFrame
+            if position['tradingsymbol'] == CE_symbol:
+                qty_CE += int(abs(position['quantity']) / 25)
+                CE_PLPREC = matching_row['PL%'].values[0]
+                
+            elif position['tradingsymbol'] == PE_symbol:
+                qty_PE += int(abs(position['quantity']) / 25)
+                PE_PLPREC = matching_row['PL%'].values[0]
+
+    return qty_CE, qty_PE, CE_PLPREC, PE_PLPREC
+
+
+def count_positions_by_type(positions_net):
+    count_CE = 0
+    count_PE = 0
+    for position in positions_net:
+        if position['tradingsymbol'].startswith('NIFTY') and abs(position['quantity']) >= 25:
+            if position['tradingsymbol'].endswith('CE'):
+                count_CE += 1
+            elif position['tradingsymbol'].endswith('PE'):
+                count_PE += 1
+    return count_CE, count_PE
+
+def check_existing_positions(positions_net, symbol):
+    for position in positions_net:
+        if position['tradingsymbol'][-7:] == symbol[-7:] and abs(position['quantity']) >= 25:
+            return True
+    return False
 
 # Get initial data
 _, CE_Strike, PE_Strike, _ = get_prices()
@@ -38,47 +81,30 @@ def construct_symbol(expiry_year, expiry_month, expiry_day, option_type):
     else:
         return f"NIFTY{expiry_year}{expiry_month}{noptions}{option_type}"
 
-def count_positions_by_type(broker):
-    positions_response = broker.kite.positions()
-    positions_net = positions_response['net']
-    count_CE = 0
-    count_PE = 0
-    for position in positions_net:
-        if position['tradingsymbol'].startswith('NIFTY') and abs(position['quantity']) >= 25:
-            if position['tradingsymbol'].endswith('CE'):
-                count_CE += 1
-            elif position['tradingsymbol'].endswith('PE'):
-                count_PE += 1
-    return count_CE, count_PE
-
-def check_existing_positions(broker, symbol):
-    positions_response = broker.kite.positions()
-    positions_net = positions_response['net']
-    for position in positions_net:
-        if position['tradingsymbol'][-7:] == symbol[-7:] and abs(position['quantity']) >= 25:
-            return True
-    return False
-
 async def main():
     try:
         # Redirect sys.stdout to 'output.txt'
         with open('output.txt', 'w') as file:
-            # sys.stdout = file
+            sys.stdout = file
 
             try:
-                sys.stdout = file
                 broker = get_kite()
                 sys.stdout = sys.__stdout__
             except Exception as e:
                 remove_token(dir_path)
                 print(traceback.format_exc())
-                logging.error(f"{str(e)} unable to get holdings")
+                logging.error(f"{str(e)} - Unable to get holdings")
                 sys.exit(1)
 
             try:
                 from fundpxy import calculate_decision
                 decision, optdecision, available_cash, live_balance, limit = calculate_decision()
-                count_CE, count_PE = count_positions_by_type(broker)
+
+                # Fetch and process positions using combined_df from process_data
+                combined_df = process_data()
+                positions_net = combined_df.to_dict('records')
+
+                count_CE, count_PE = count_positions_by_type(positions_net)
                 PE_weight = count_PE - count_CE
                 CE_weight = count_CE - count_PE
                 weight = abs(count_PE - count_CE)
@@ -90,42 +116,14 @@ async def main():
                 CE_symbol = construct_symbol(expiry_year, expiry_month, expiry_day, 'CE')
                 PE_symbol = construct_symbol(expiry_year, expiry_month, expiry_day, 'PE')
 
-                CE_position_exists = check_existing_positions(broker, CE_symbol)
-                PE_position_exists = check_existing_positions(broker, PE_symbol)
+                CE_position_exists = check_existing_positions(positions_net, CE_symbol)
+                PE_position_exists = check_existing_positions(positions_net, PE_symbol)
 
-                def qty_positions_by_type(broker, CE_symbol, PE_symbol):
-                    positions_response = broker.kite.positions()
-                    positions_net = positions_response['net']
-                    qty_CE = 0
-                    qty_PE = 0
-                    CE_PLPREC = 0  # Initialize P&L percentage for CE
-                    PE_PLPREC = 0  # Initialize P&L percentage for PE
-                
-                    for position in positions_net:
-                        if position['tradingsymbol'] == CE_symbol:
-                            avg_price = position['quantity'] * position['average_price']
-                            if avg_price != 0:  # Check for division by zero
-                                qty_CE += int(abs(position['quantity']) / 25)
-                                CE_PLPREC = int(position['pnl'] / position['buy_value'] * 100)
-                        elif position['tradingsymbol'] == PE_symbol:
-                            avg_price = position['quantity'] * position['average_price']
-                            if avg_price != 0:  # Check for division by zero
-                                qty_PE += int(abs(position['quantity']) / 25)
-                                PE_PLPREC = int(position['pnl'] / position['buy_value'] * 100)
-                
-                    return qty_CE, qty_PE, CE_PLPREC, PE_PLPREC
-                qty_CE, qty_PE,CE_PLPREC,PE_PLPREC = qty_positions_by_type(broker, CE_symbol, PE_symbol)
+                qty_CE, qty_PE, CE_PLPREC, PE_PLPREC = qty_positions_by_type(positions_net, CE_symbol, PE_symbol, combined_df)
 
-                # Print all relevant variables before entering the if block
-                #print(f"bmktpredict: {bmktpredict}")
-                #print(f"mktpxy: {mktpxy}")
-                #print(f"CE_position_exists: {CE_position_exists}")
                 print(f"{PE_symbol}  {(f'{qty_PE}x' if PE_position_exists else '')}{'🥚' if PE_position_exists else '🛒'}  {PE_PLPREC:4d}".rjust(41))
                 print(f"{CE_symbol}  {(f'{qty_CE}x' if CE_position_exists else '')}{'🥚' if CE_position_exists else '🛒'}  {CE_PLPREC:4d}".rjust(41))
-                #print(f"count_CE: {count_CE}")
-                #print(f"count_PE: {count_PE}")
                 
-
                 if mktpredict == "SIDE":
                     if mktpxy == "Buy":
                         if CE_position_exists:
@@ -143,32 +141,17 @@ async def main():
                 
                 elif mktpredict == "RISE":
                     if mktpxy == "Buy":
-                        if CE_position_exists:
-                            print(f"    {CE_symbol} is there, let's {BRIGHT_YELLOW}skip{RESET}")
+                        if PE_position_exists:
+                            print(f"    {PE_symbol} is there, let's {BRIGHT_YELLOW}skip{RESET}")
                         else:
-                            print(f"    {CE_symbol} not there, let's Buy")
-                            await process_orders(broker, available_cash, CE_position_exists, False, CE_symbol, None, count_CE, count_PE, mktpxy)
+                            print(f"    {PE_symbol} not there, let's Buy")
+                            await process_orders(broker, available_cash, False, PE_position_exists, None, PE_symbol, count_CE, count_PE, mktpxy)
                     
                     elif mktpxy == "Sell":
                         if nse_power > 0.70:
-                            if PE_position_exists:
-                                if (PE_PLPREC < -3 and qty_PE < 2) or (PE_PLPREC < -5 and qty_PE < 3) or (PE_PLPREC < -7 and qty_PE < 4):
-                                    print(f"    {PE_symbol} is there,But {BRIGHT_RED}Re-Buy{RESET}")
-                                    await place_order(broker, PE_symbol, 'BUY', 'NRML', 25, 'MARKET')
-                                else:
-                                    print(f"    {PE_symbol} is there, let's {BRIGHT_YELLOW}skip{RESET}")
-                            else:
-                                print(f"    {PE_symbol} not there, let's Buy")
-                                await process_orders(broker, available_cash, False, PE_position_exists, None, PE_symbol, count_CE, count_PE, mktpxy)
-                        else:
-                            print(f"nse_power:{nse_power} is not high enough,{BRIGHT_YELLOW}skipping{RESET}")
-                
-                elif mktpredict == "FALL":
-                    if mktpxy == "Buy":
-                        if nse_power < 0.30:
                             if CE_position_exists:
-                                if (CE_PLPREC < -3 and qty_CE < 2) or (CE_PLPREC < -5 and qty_CE < 3) or (CE_PLPREC < -7 and qty_CE < 4):
-                                    print(f"    {CE_symbol} is there,But {BRIGHT_RED}Re-Buy{RESET}")
+                                if (CE_PLPREC > 3 and qty_CE < 2) or (CE_PLPREC > 5 and qty_CE < 3) or (CE_PLPREC > 7 and qty_CE < 4):
+                                    print(f"    {CE_symbol} is there, But {BRIGHT_GREEN}Re-Buy{RESET}")
                                     await place_order(broker, CE_symbol, 'BUY', 'NRML', 25, 'MARKET')
                                 else:
                                     print(f"    {CE_symbol} is there, let's {BRIGHT_YELLOW}skip{RESET}")
@@ -176,30 +159,32 @@ async def main():
                                 print(f"    {CE_symbol} not there, let's Buy")
                                 await process_orders(broker, available_cash, CE_position_exists, False, CE_symbol, None, count_CE, count_PE, mktpxy)
                         else:
-                            print(f"nse_power:{nse_power} is not low enough,{BRIGHT_YELLOW}skipping{RESET}")
-                
+                            print(f"    {CE_symbol} is there, let's {BRIGHT_YELLOW}skip{RESET}")
+
+                elif mktpredict == "FALL":
+                    if mktpxy == "Buy":
+                        if CE_position_exists:
+                            print(f"    {CE_symbol} is there, let's {BRIGHT_YELLOW}skip{RESET}")
+                        else:
+                            print(f"    {CE_symbol} not there, let's Buy")
+                            await process_orders(broker, available_cash, CE_position_exists, False, CE_symbol, None, count_CE, count_PE, mktpxy)
+                    
                     elif mktpxy == "Sell":
                         if PE_position_exists:
-                            print(f"    {PE_symbol} is there, let's {BRIGHT_YELLOW}skip{RESET}")
+                            if (PE_PLPREC > 3 and qty_PE < 2) or (PE_PLPREC > 5 and qty_PE < 3) or (PE_PLPREC > 7 and qty_PE < 4):
+                                print(f"    {PE_symbol} is there, But {BRIGHT_GREEN}Re-Buy{RESET}")
+                                await place_order(broker, PE_symbol, 'BUY', 'NRML', 25, 'MARKET')
+                            else:
+                                print(f"    {PE_symbol} is there, let's {BRIGHT_YELLOW}skip{RESET}")
                         else:
                             print(f"    {PE_symbol} not there, let's Buy")
                             await process_orders(broker, available_cash, False, PE_position_exists, None, PE_symbol, count_CE, count_PE, mktpxy)
-                
 
             except Exception as e:
-                print(f"Error: {e}")
-                logging.error(f"Error in main(): {e}")
+                print(traceback.format_exc())
+                logging.error(f"{str(e)} - Error during processing")
+                sys.exit(1)
 
-    finally:
-        # Reset sys.stdout to its default value
-        pass
-        # sys.stdout = sys.__stdout__
+if __name__ == "__main__":
+    asyncio.run(main())
 
-async def run_main():
-    await main()
-
-# Run the asynchronous function using asyncio.run()
-def sync_main():
-    asyncio.run(run_main())
-
-sync_main()
