@@ -13,7 +13,6 @@ from mktpxy import get_market_check
 from rsnprntpxy import process_orders
 from exprpxy import month_expiry_date
 from bftpxy import get_bnk_action
-from predictpxy import predict_market_sentiment
 from bpredictpxy import predict_bnk_sentiment
 from clorpxy import SILVER, UNDERLINE, RED, GREEN, YELLOW, RESET, BRIGHT_YELLOW, BRIGHT_RED, BRIGHT_GREEN, BOLD, GREY
 from hndmktpxy import hand
@@ -63,10 +62,9 @@ def check_existing_positions(positions_net, symbol):
 
 # Get initial data
 BCE_Strike, _, _, BPE_Strike = get_prices()
-nsma = check_index_status('^NSEBANK')
+bsma = check_index_status('^NSEBANK')
 onemincandlesequance, mktpxy = get_market_check('^NSEBANK')
 ha_bnk_action, bnk_power, bDay_Change, bOpen_Change = get_bnk_action()
-mktpredict = predict_market_sentiment()
 bmktpredict = predict_bnk_sentiment()
 showhand = hand(mktpxy)
 
