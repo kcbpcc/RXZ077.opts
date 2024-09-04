@@ -115,8 +115,9 @@ async def main():
 
                 qty_CE, qty_PE, CE_PLPREC, PE_PLPREC = qty_positions_by_type(positions_net, CE_symbol, PE_symbol, combined_df)
 
-                print(f"{PE_symbol}  {(f'{qty_PE}x' if PE_position_exists else '')}{'🥚' if PE_position_exists else '🛒'}  {PE_PLPREC:4.2f}".rjust(41))
-                print(f"{CE_symbol}  {(f'{qty_CE}x' if CE_position_exists else '')}{'🥚' if CE_position_exists else '🛒'}  {CE_PLPREC:4.2f}".rjust(41))
+                print(f"{PE_symbol}  {(f'{qty_PE}x' if PE_position_exists else '')}{'🥚' if PE_position_exists else '🛒'}  {PE_PLPREC:5.2f}".rjust(41))
+                print(f"{CE_symbol}  {(f'{qty_CE}x' if CE_position_exists else '')}{'🥚' if CE_position_exists else '🛒'}  {CE_PLPREC:5.2f}".rjust(41))
+
                
                 if bmktpredict == "SIDE":
                     if mktpxy == "Buy":
