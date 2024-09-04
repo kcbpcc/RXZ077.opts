@@ -73,9 +73,9 @@ def construct_symbol(expiry_year, expiry_month, expiry_day, option_type):
         expiry_month = expiry_month[1]
     noptions = PE_Strike if option_type == "PE" else (CE_Strike if option_type == "CE" else None)
     if expiry_day is None:
-        return f"NIFTY{expiry_year}{expiry_month}{noptions}{option_type}"
+        return f"BANKNIFTY{expiry_year}{expiry_month}{noptions}{option_type}"
     else:
-        return f"NIFTY{expiry_year}{expiry_month}{noptions}{option_type}"
+        return f"BANKNIFTY{expiry_year}{expiry_month}{noptions}{option_type}"
 
 async def main():
     try:
