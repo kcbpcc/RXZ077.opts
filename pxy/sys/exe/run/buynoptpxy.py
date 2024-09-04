@@ -84,6 +84,7 @@ async def main():
 
             try:
                 broker = get_kite()
+                sys.stdout = sys.__stdout__
             except Exception as e:
                 remove_token(dir_path)
                 print(traceback.format_exc())
@@ -151,44 +152,46 @@ async def main():
                             else:
                                 print(f"    {PE_symbol} not there, let's Buy")
                                 await process_orders(broker, available_cash, False, PE_position_exists, None, PE_symbol, count_CE, count_PE, mktpxy)
+                        else:
+                            print(f"nse_power:{nse_power} is not high enough,{BRIGHT_YELLOW}skipping{RESET}")
                 
                 elif mktpredict == "FALL":
-                    if mktpxy == "Sell":
-                        if PE_position_exists:
-                            print(f"    {PE_symbol} is there, let's {BRIGHT_YELLOW}skip{RESET}")
+                    if mktpxy == "Buy":
+                        if nse_power < 0.30:
+                            if CE_position_exists:
+                                if (CE_PLPREC < -3 and qty_CE < 2) or (CE_PLPREC < -5 and qty_CE < 3) or (CE_PLPREC < -7 and qty_CE < 4):
+                                    print(f"    {CE_symbol} is there,But {BRIGHT_RED}Re-Buy{RESET}")
+                                    await place_order(broker, CE_symbol, 'BUY', 'NRML', 25, 'MARKET')
+                                else:
+                                    print(f"    {CE_symbol} is there, let's {BRIGHT_YELLOW}skip{RESET}")
+                            else:
+                                print(f"    {CE_symbol} not there, let's Buy")
+                                await process_orders(broker, available_cash, CE_position_exists, False, CE_symbol, None, count_CE, count_PE, mktpxy)
                         else:
-                            print(f"    {PE_symbol} not there, let's Sell")
-                            await process_orders(broker, available_cash, False, PE_position_exists, None, PE_symbol, count_CE, count_PE, mktpxy)
-
-                elif mktpredict == "RISE":
-                    if mktpxy == "Sell":
-                        if PE_position_exists:
-                            print(f"    {PE_symbol} is there, let's {BRIGHT_YELLOW}skip{RESET}")
-                        else:
-                            print(f"    {PE_symbol} not there, let's Sell")
-                            await process_orders(broker, available_cash, False, PE_position_exists, None, PE_symbol, count_CE, count_PE, mktpxy)
-
-                elif mktpredict == "SIDE":
-                    if mktpxy == "Sell":
-                        if PE_position_exists:
-                            print(f"    {PE_symbol} is there, let's {BRIGHT_YELLOW}skip{RESET}")
-                        else:
-                            print(f"    {PE_symbol} not there, let's Sell")
-                            await process_orders(broker, available_cash, False, PE_position_exists, None, PE_symbol, count_CE, count_PE, mktpxy)
-
-                await asyncio.sleep(10)
+                            print(f"nse_power:{nse_power} is not low enough,{BRIGHT_YELLOW}skipping{RESET}")
                 
-            except Exception as e:
-                logging.error(f"Error during main execution: {traceback.format_exc()}")
-                print(traceback.format_exc())
+                    elif mktpxy == "Sell":
+                        if PE_position_exists:
+                            print(f"    {PE_symbol} is there, let's {BRIGHT_YELLOW}skip{RESET}")
+                        else:
+                            print(f"    {PE_symbol} not there, let's Buy")
+                            await process_orders(broker, available_cash, False, PE_position_exists, None, PE_symbol, count_CE, count_PE, mktpxy)
+                
 
-    except Exception as e:
-        logging.error(f"Error in main function: {traceback.format_exc()}")
-        print(traceback.format_exc())
+            except Exception as e:
+                print(f"Error: {e}")
+                logging.error(f"Error in main(): {e}")
 
     finally:
-        sys.stdout = sys.__stdout__
+        # Reset sys.stdout to its default value
+        pass
+        # sys.stdout = sys.__stdout__
 
-if __name__ == "__main__":
-    asyncio.run(main())
+async def run_main():
+    await main()
 
+# Run the asynchronous function using asyncio.run()
+def sync_main():
+    asyncio.run(run_main())
+
+sync_main()
