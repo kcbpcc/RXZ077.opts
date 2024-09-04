@@ -9,6 +9,7 @@ from clorpxy import RED, GREEN, SILVER, UNDERLINE, RESET, BRIGHT_YELLOW, BRIGHT_
 
 console = Console()
 user = os.popen('whoami').read().strip()
+print(f"Current user: {user}")
 def get_user_input(prompt, default='s'):
     user_input = input(prompt).strip()
     if user_input == '':
