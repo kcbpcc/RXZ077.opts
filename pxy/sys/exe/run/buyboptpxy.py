@@ -122,9 +122,9 @@ async def main():
                 if bmktpredict == "SIDE":
                     if mktpxy == "Buy":
                         if CE_position_exists:
-                            print(f"    {CE_symbol} is there, let's {BRIGHT_YELLOW}skip{RESET}")
+                            print(f"{CE_symbol} is there, let's {BRIGHT_YELLOW}skip{RESET}")
                         else:
-                            print(f"    {CE_symbol} not there, let's Buy")
+                            print(f"{CE_symbol} not there, let's Buy")
                             await process_orders(broker, available_cash, CE_position_exists, False, CE_symbol, None, count_CE, count_PE, mktpxy)
                     
                     elif mktpxy == "Sell":
@@ -137,9 +137,9 @@ async def main():
                 elif bmktpredict == "RISE":
                     if mktpxy == "Buy":
                         if CE_position_exists:
-                            print(f"    {CE_symbol} is there, let's {BRIGHT_YELLOW}skip{RESET}")
+                            print(f"{CE_symbol} is there, let's {BRIGHT_YELLOW}skip{RESET}")
                         else:
-                            print(f"    {CE_symbol} not there, let's Buy")
+                            print(f"{CE_symbol} not there, let's Buy")
                             await process_orders(broker, available_cash, CE_position_exists, False, CE_symbol, None, count_CE, count_PE, mktpxy)
                     
                     elif mktpxy == "Sell":
@@ -161,12 +161,12 @@ async def main():
                         if bnk_power < 0.30:
                             if CE_position_exists:
                                 if (CE_PLPREC < -5 and qty_CE < 2) or (CE_PLPREC < -9 and qty_CE < 3) or (CE_PLPREC < -13 and qty_CE < 4):
-                                    print(f"    {CE_symbol} is there,But {BRIGHT_RED}Re-Buy{RESET}")
+                                    print(f"{CE_symbol} is there,But {BRIGHT_RED}Re-Buy{RESET}")
                                     await place_order(broker, CE_symbol, 'BUY', 'NRML', 25, 'MARKET')
                                 else:
-                                    print(f"    {CE_symbol} is there, let's {BRIGHT_YELLOW}skip{RESET}")
+                                    print(f"{CE_symbol} is there, let's {BRIGHT_YELLOW}skip{RESET}")
                             else:
-                                print(f"    {CE_symbol} not there, let's Buy")
+                                print(f"{CE_symbol} not there, let's Buy")
                                 await process_orders(broker, available_cash, CE_position_exists, False, CE_symbol, None, count_CE, count_PE, mktpxy)
                         else:
                             print(f"bnk_power:{bnk_power} is not low enough,{BRIGHT_YELLOW}skipping{RESET}")
