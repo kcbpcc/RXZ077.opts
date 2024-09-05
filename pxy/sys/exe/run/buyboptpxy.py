@@ -143,7 +143,7 @@ async def main():
                             await process_orders(broker, available_cash, CE_position_exists, False, CE_symbol, None, count_CE, count_PE, mktpxy)
                     
                     elif mktpxy == "Sell":
-                        if nse_power > 0.70:
+                        if bnk_power > 0.70:
                             if PE_position_exists:
                                 if (PE_PLPREC < -5 and qty_PE < 2) or (PE_PLPREC < -9 and qty_PE < 3) or (PE_PLPREC < -13 and qty_PE < 4):
                                     print(f"{PE_symbol} is there,But {BRIGHT_RED}Re-Buy{RESET}")
@@ -154,11 +154,11 @@ async def main():
                                 print(f"{PE_symbol} not there, let's Buy")
                                 await process_orders(broker, available_cash, False, PE_position_exists, None, PE_symbol, count_CE, count_PE, mktpxy)
                         else:
-                            print(f"nse_power:{nse_power} is not high enough,{BRIGHT_YELLOW}skipping{RESET}")
+                            print(f"bnk_power:{bnk_power} is not high enough,{BRIGHT_YELLOW}skipping{RESET}")
                 
                 elif bmktpredict == "FALL":
                     if mktpxy == "Buy":
-                        if nse_power < 0.30:
+                        if bnk_power < 0.30:
                             if CE_position_exists:
                                 if (CE_PLPREC < -5 and qty_CE < 2) or (CE_PLPREC < -9 and qty_CE < 3) or (CE_PLPREC < -13 and qty_CE < 4):
                                     print(f"    {CE_symbol} is there,But {BRIGHT_RED}Re-Buy{RESET}")
@@ -169,7 +169,7 @@ async def main():
                                 print(f"    {CE_symbol} not there, let's Buy")
                                 await process_orders(broker, available_cash, CE_position_exists, False, CE_symbol, None, count_CE, count_PE, mktpxy)
                         else:
-                            print(f"nse_power:{nse_power} is not low enough,{BRIGHT_YELLOW}skipping{RESET}")
+                            print(f"bnk_power:{bnk_power} is not low enough,{BRIGHT_YELLOW}skipping{RESET}")
                 
                     elif mktpxy == "Sell":
                         if PE_position_exists:
