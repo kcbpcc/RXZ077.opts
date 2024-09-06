@@ -91,7 +91,7 @@ def exit_options(exe_opt_df, broker):
             total_pl_percentage = row['PL%']
             tgtoptsmadepth = row['tgtoptsmadepth']
             
-            if total_pl_percentage > (tgtoptsmadepth + 10) and row['PnL'] > 400:
+            if total_pl_percentage > (tgtoptsmadepth + 15) and row['PnL'] > 400:
                 message = (
                     f"{row['key']}🎯\n"
                     f"   🎯 Target PL%: {round(tgtoptsmadepth, 4)}%\n"
