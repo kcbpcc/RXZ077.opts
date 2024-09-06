@@ -196,6 +196,7 @@ while True:
             color = BRIGHT_GREEN if bsma == "up" else BRIGHT_RED if bsma == "down" else BRIGHT_YELLOW
             print(color + "ﮩ٨ﮩ٨ـﮩ٨ﮩ٨ـﮩ٨ـﮩﮩ٨BANKNIFTY٨ﮩ٨ـﮩ٨ـﮩﮩ٨ﮩ٨ـﮩ٨ﮩ٨" + RESET)
 ############################################"PXY® PreciseXceleratedYield Pvt Ltd™############################################    ############################################"PXY® PreciseXceleratedYield Pvt Ltd™############################################ 
+    subprocess.run(['python3', 'misordpxy.pyc'])
     subprocess.run(['python3', 'plpxy.pyc']) if peak == "PEAKEND" else None
     print("━" * 42)
     if run_type == 's':
