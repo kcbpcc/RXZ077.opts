@@ -91,7 +91,7 @@ def exit_options(exe_opt_df, broker):
             total_pl_percentage = row['PL%']
             tgtoptsmadepth = row['tgtoptsmadepth']
             
-            if total_pl_percentage > (tgtoptsmadepth + 22) and row['PnL'] > 400:
+            if total_pl_percentage > tgtoptsmadepth and row['PnL'] > 400:
                 message = (
                     f"{row['key']}🎯\n"
                     f"   🎯 Target PL%: {round(tgtoptsmadepth, 4)}%\n"
@@ -171,7 +171,7 @@ def compute_depth(row):
             if bcedepth > 1:
                 return max(3.9, (12.9 - bcedepth))
             elif bpedepth > 1:
-                return 10
+                return 5
             else:
                 return 10
 
@@ -179,7 +179,7 @@ def compute_depth(row):
             if bpedepth > 1:
                 return max(3.9, (12.9 - bpedepth))
             elif bcedepth > 1:
-                return 10
+                return 5
             else:
                 return 10
 
@@ -187,7 +187,7 @@ def compute_depth(row):
             if ncedepth > 1:
                 return max(3.9, (12.9 - ncedepth))
             elif npedepth > 1:
-                return 10
+                return 5
             else:
                 return 10
 
@@ -195,7 +195,7 @@ def compute_depth(row):
             if npedepth > 1:
                 return max(3.9, (12.9 - npedepth))
             elif ncedepth > 1:
-                return 10
+                return 5
             else:
                 return 10
 
