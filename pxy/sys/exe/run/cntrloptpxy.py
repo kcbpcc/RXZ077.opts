@@ -239,11 +239,11 @@ print_df['MN'] = np.where(
     np.where(print_df['key'].str.contains(next_month_abbr), '🔢', None)
 )
 print_df = print_df[['MN', 'strike', 'Invested', 'qty', 'PL%', 'm2m', 'PnL', 'CP', 'group','tgtoptsmadepth']]
-filtered_data = print_df.query('qty > 0')[['MN', 'strike', 'CP', 'qty','tgtoptsmadepth', 'PL%', 'PnL']]
+filtered_data = print_df.query('qty > 0')[['MN', 'strike', 'CP', 'qty','tgtoptsmadepth', 'PL%', 'PnL','booked']]
 filtered_data['PL%'] = filtered_data['PL%'].astype(int)
 print("━" * 42)
 if filtered_data.empty:
     print(f"{GREY}Still fishing🔎🎣, nothing surfaced yet.🐟{RESET}")
 else:
     print(f"Surfaced .🐟, let's try to catch them 🔎🎣{RESET}")
-    print(filtered_data.to_string(header=False, index=False, col_space=[2, 10, 2, 3, 4, 4, 7]))
+    print(filtered_data.to_string(header=False, index=False, col_space=[2, 10, 2, 3, 4, 4, 7, 7]))
