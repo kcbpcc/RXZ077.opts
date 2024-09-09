@@ -144,7 +144,7 @@ async def main():
                     elif mktpxy == "Sell":
                         if nse_power > 0.70:
                             if PE_position_exists:
-                                if (PE_PLPREC < -5 and qty_PE < 2) or (PE_PLPREC < -9 and qty_PE < 3) or (PE_PLPREC < -13 and qty_PE < 4):
+                                if (PE_PLPREC < -20 and qty_PE < 2) or (PE_PLPREC < -40 and qty_PE < 3) or (PE_PLPREC < -80 and qty_PE < 4):
                                     print(f"    {PE_symbol} is there,But {BRIGHT_RED}Re-Buy{RESET}")
                                     await place_order(broker, PE_symbol, 'BUY', 'NRML', 25, 'MARKET')
                                 else:
@@ -159,7 +159,7 @@ async def main():
                     if mktpxy == "Buy":
                         if nse_power < 0.30:
                             if CE_position_exists:
-                                if (CE_PLPREC < -5 and qty_CE < 2) or (CE_PLPREC < -9 and qty_CE < 3) or (CE_PLPREC < -13 and qty_CE < 4):
+                                if (CE_PLPREC < -20 and qty_CE < 2) or (CE_PLPREC < -40 and qty_CE < 3) or (CE_PLPREC < -80 and qty_CE < 4):
                                     print(f"    {CE_symbol} is there,But {BRIGHT_RED}Re-Buy{RESET}")
                                     await place_order(broker, CE_symbol, 'BUY', 'NRML', 25, 'MARKET')
                                 else:
