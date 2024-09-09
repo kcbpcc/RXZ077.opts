@@ -52,6 +52,9 @@ def process_data():
         combined_df['close'] = combined_df['close_price']
         combined_df['qty'] = combined_df['quantity']
         combined_df['booked'] = (combined_df['day_sell_price'] - combined_df['average_price']) * combined_df['day_sell_quantity']
+        combined_df['pxypnl'] = combined_df['unrealised'] - combined_df['booked']
+        
+
 
         
         # Handle potential NaN values and convert to int
