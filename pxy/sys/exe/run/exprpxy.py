@@ -6,7 +6,7 @@ def month_expiry_date():
     day_of_month = current_date.day
     
     # Check if the current day is after the 15th
-    if day_of_month >= 15:
+    if day_of_month >= 7:
         # Determine the next month
         current_month = current_date.month
         next_month = current_month % 12 + 1
