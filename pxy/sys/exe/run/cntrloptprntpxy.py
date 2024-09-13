@@ -96,10 +96,20 @@ bextras, btotal_opt_m2m = calculate_extras_and_m2m(bank_df)
 
 # Filter and process the DataFrame
 opt_df = combined_df[combined_df['key'].str.contains('NFO:', case=False)].copy()
+
+# Remove 'NFO:' from the 'key' column
 opt_df['key'] = opt_df['key'].str.replace('NFO:', '', regex=False)
-opt_df['PL%'] = ((opt_df['PnL'] / opt_df['Invested']) * 100).fillna(0).astype(int)
-opt_df['m2m'] = opt_df['m2m'].astype(int)
+
+# Handle cases where 'Invested' is zero or NaN to avoid division errors
+opt_df['Invested'] = opt_df['Invested'].replace(0, float('nan'))  # Replace zero invested with NaN
+opt_df['PL%'] = ((opt_df['PnL'] / opt_df['Invested']) * 100).fillna(0).astype(int)  # Safely calculate PL%
+
+# Handle missing or non-integer 'm2m' values
+opt_df['m2m'] = pd.to_numeric(opt_df['m2m'], errors='coerce').fillna(0).astype(int)
+
+# Select the required columns
 opt_df = opt_df[['key', 'Invested', 'qty', 'PL%', 'PnL', 'pnl', 'product', 'm2m']]
+
 
 total_invested = opt_df['Invested'].sum()
 cashround = round(live_balance / 100000, 2)
