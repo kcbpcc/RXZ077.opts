@@ -256,7 +256,7 @@ for group, data in grouped_df:
     if total_invested_group != 0:
         Istrike = Nstrike if group == 'N' else Bstrike if group == 'B' else "Unknown"
         linecepepxy= format_investments(total_invested_pe, total_invested_ce)
-        value_statement = f"  {pe_count:02d} -🟥- {total_invested_pe:06.2f}  {Istrike}   {total_invested_ce:06.2f}  -🟩- {ce_count:02d}"
+        value_statement = f"{pe_count:02d} -🟥- {total_invested_pe:06.2f}  {Istrike}   {total_invested_ce:06.2f}  -🟩- {ce_count:02d}"
         summary_sentence = f"CAP:{total_invested_group} P&L:{total_pl_group:6.0f} P&L%:{total_pl_percentage_group:3.0f}%"
         color_code = BRIGHT_GREEN if total_pl_percentage_group > 0 else BRIGHT_RED
         color_none = SILVER
