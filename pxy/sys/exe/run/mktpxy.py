@@ -13,7 +13,7 @@ END_TIME = 245    # 4:05 AM UTC
 
 def fetch_data(symbol):
     # Fetch real-time data for the specified symbol with a 1-minute interval
-    data = yf.Ticker(symbol).history(period="5d", interval="1m")
+    data = yf.Ticker(symbol).history(period="5d", interval="2m")
     return data
 
 def calculate_heikin_ashi_colors(data):
