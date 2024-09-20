@@ -53,9 +53,9 @@ def get_market_check(symbol):
         mktpxy = 'Bear'
     elif current_color == 'Bull' and last_closed_color == 'Bull':
         mktpxy = 'Bull'
-    elif current_color == 'Bear' and last_closed_color == 'Bull' and second_last_closed_color == 'Bull' and third_last_closed_color == 'Bull':
+    elif current_color == 'Bear' and last_closed_color == 'Bull' and second_last_closed_color == 'Bull': #and third_last_closed_color == 'Bull':
         mktpxy = 'Sell'
-    elif current_color == 'Bull' and last_closed_color == 'Bear' and second_last_closed_color == 'Bear' and third_last_closed_color == 'Bear':
+    elif current_color == 'Bull' and last_closed_color == 'Bear' and second_last_closed_color == 'Bear': #and third_last_closed_color == 'Bear':
         mktpxy = 'Buy'
     else:
         mktpxy = 'None'
