@@ -1,22 +1,18 @@
 from rich import print
-import sys
 import yfinance as yf
 import time
 import warnings
-
-# Set the python3IOENCODING environment variable to 'utf-8'
-sys.stdout.reconfigure(encoding='utf-8')
 
 # Suppress yfinance warnings
 warnings.filterwarnings("ignore", category=FutureWarning)
 warnings.filterwarnings("ignore", category=UserWarning)
 
-# Constants
-START_TIME = 223
-END_TIME = 245
+# Constants for time range
+START_TIME = 223  # 3:45 AM UTC
+END_TIME = 245    # 4:05 AM UTC
 
 def fetch_data(symbol):
-    # Fetch real-time data for the specified interval and symbol
+    # Fetch real-time data for the specified symbol with a 1-minute interval
     data = yf.Ticker(symbol).history(period="5d", interval="1m")
     return data
 
@@ -39,32 +35,27 @@ def calculate_heikin_ashi_colors(data):
 
     return onemincandlesequance, current_color, last_closed_color, second_last_closed_color, third_last_closed_color
 
-
 def calculate_last_twenty_heikin_ashi_colors(symbol):
     # Check if the current time is within the specified time range (3:45 AM to 4:00 AM UTC)
     current_utc_time = time.gmtime().tm_hour * 60 + time.gmtime().tm_min
 
-    if START_TIME <= current_utc_time < END_TIME:
-        # Download data for the specified number of days (fixed to 20 days) with a 1-minute interval
-        data = yf.Ticker(symbol).history(period="5d", interval="1m")
-    else:
-        data = fetch_data(symbol)
-
+    # Fetch data if within time range or default period
+    data = fetch_data(symbol)
+    
     return calculate_heikin_ashi_colors(data)
 
 def get_market_check(symbol):
-    # Call the function calculate_last_twenty_heikin_ashi_colors to get colors
-    onemincandlesequance, current_color, last_closed_color, second_last_closed_color, third_last_closed_color
- = calculate_last_twenty_heikin_ashi_colors(symbol)
+    # Get the Heikin-Ashi candle colors
+    onemincandlesequance, current_color, last_closed_color, second_last_closed_color, third_last_closed_color = calculate_last_twenty_heikin_ashi_colors(symbol)
 
-    # Determine the market check based on the candle colors
+    # Determine the market condition based on Heikin-Ashi colors
     if current_color == 'Bear' and last_closed_color == 'Bear':
         mktpxy = 'Bear'
     elif current_color == 'Bull' and last_closed_color == 'Bull':
         mktpxy = 'Bull'
-    elif current_color == 'Bear' and last_closed_color == 'Bull' and second_last_closed_color == 'Bull', third_last_closed_color == 'Bull' :
+    elif current_color == 'Bear' and last_closed_color == 'Bull' and second_last_closed_color == 'Bull' and third_last_closed_color == 'Bull':
         mktpxy = 'Sell'
-    elif current_color == 'Bull' and last_closed_color == 'Bear' and second_last_closed_color == 'Bear', third_last_closed_color == 'Bear' :
+    elif current_color == 'Bull' and last_closed_color == 'Bear' and second_last_closed_color == 'Bear' and third_last_closed_color == 'Bear':
         mktpxy = 'Buy'
     else:
         mktpxy = 'None'
