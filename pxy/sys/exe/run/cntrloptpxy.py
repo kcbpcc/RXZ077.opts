@@ -173,7 +173,7 @@ def compute_depth(row):
             elif bpedepth > 1:
                 return 24
             else:
-                return 20
+                return 25
 
         elif row['key'].endswith("PE") and row['key'].startswith("BANK"):
             if bpedepth > 1:
@@ -181,7 +181,7 @@ def compute_depth(row):
             elif bcedepth > 1:
                 return 24
             else:
-                return 20
+                return 25
 
         elif row['key'].endswith("CE") and row['key'].startswith("NIFTY"):
             if ncedepth > 1:
