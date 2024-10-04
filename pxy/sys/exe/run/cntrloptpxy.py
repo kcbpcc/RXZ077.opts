@@ -149,11 +149,11 @@ def compute_tgtoptsma(row):
     key = row['key']
     
     if (bsma == "up" and key.startswith("BANK") and "CE" in key) or (bsma == "down" and key.startswith("BANK") and "PE" in key):
-        return exe_opt_df['targetPL%']
+        return 34
     elif (nsma == "up" and key.startswith("NIFTY") and "CE" in key) or (nsma == "down" and key.startswith("NIFTY") and "PE" in key):
-        return exe_opt_df['targetPL%']
+        return 34
     else:
-        return exe_opt_df['targetPL%']
+        return 34
 
 exe_opt_df['tgtoptsma'] = exe_opt_df.apply(compute_tgtoptsma, axis=1)
 
@@ -169,41 +169,41 @@ def compute_depth(row):
         
         if row['key'].endswith("CE") and row['key'].startswith("BANK"):
             if bcedepth > 1:
-                return max(3.9, (exe_opt_df['targetPL%']- bcedepth))
+                return max(3.9, (15- bcedepth))
             elif bpedepth > 1:
-                return exe_opt_df['targetPL%']
+                return 34
             else:
-                return exe_opt_df['targetPL%']
+                return 35
 
         elif row['key'].endswith("PE") and row['key'].startswith("BANK"):
             if bpedepth > 1:
-                return max(3.9, (exe_opt_df['targetPL%']- bpedepth))
+                return max(3.9, (15- bpedepth))
             elif bcedepth > 1:
-                return exe_opt_df['targetPL%']
+                return 34
             else:
-                return exe_opt_df['targetPL%']
+                return 35
 
         elif row['key'].endswith("CE") and row['key'].startswith("NIFTY"):
             if ncedepth > 1:
-                return max(3.9, (exe_opt_df['targetPL%']- ncedepth))
+                return max(3.9, (15- ncedepth))
             elif npedepth > 1:
-                return exe_opt_df['targetPL%']
+                return 34
             else:
-                return exe_opt_df['targetPL%']
+                return 34
 
         elif row['key'].endswith("PE") and row['key'].startswith("NIFTY"):
             if npedepth > 1:
-                return max(3.9, (exe_opt_df['targetPL%']- npedepth))
+                return max(3.9, (15- npedepth))
             elif ncedepth > 1:
-                return exe_opt_df['targetPL%']
+                return 34
             else:
-                return exe_opt_df['targetPL%']
+                return 34
 
         else:
-            return exe_opt_df['targetPL%']
+            return 34
     except Exception as e:
         # Optionally log the exception e here
-        return exe_opt_df['targetPL%']
+        return 34
 
 
 exe_opt_df['tgtoptsmadepth'] = exe_opt_df.apply(compute_depth, axis=1)
