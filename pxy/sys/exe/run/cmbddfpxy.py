@@ -54,6 +54,7 @@ def process_data():
             combined_df['booked'] = 0  # Handle missing data case
         combined_df['PnL'] = (combined_df['unrealised'] - combined_df['booked']).round(2).astype(int)
         combined_df['PL%'] = round((combined_df['PnL'] / combined_df['Invested'] * 100), 2)
+        combined_df['targetPL%'] = 10 + (3*combined_df[day_sell_quantity/20)
         combined_df['Yvalue'] = combined_df['qty'] * combined_df['close']
         combined_df['dPnL'] = combined_df['value'] - combined_df['Yvalue']
         combined_df.to_csv('pxycombined.csv', index=False)
