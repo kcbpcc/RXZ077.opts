@@ -39,14 +39,15 @@ def process_data():
             return pd.DataFrame()
         positions_df.to_csv('pxypositions.csv', index=False)
         combined_df = positions_df.reset_index(drop=True)
-        combined_df['key'] = combined_df['exchange'] + ":" + combined_df['tradingsymbol']
-        combined_df['ltp'] = combined_df['last_price']
-        combined_df['close'] = combined_df['close_price']
-        combined_df['qty'] = combined_df['quantity']
-        combined_df['avg'] = combined_df.get('average_price', 0)
-        combined_df['Invested'] = (combined_df['qty'] * combined_df['avg']).round(0).astype(int)
-        combined_df['value'] = combined_df['qty'] * combined_df['ltp']
-        combined_df['PnL'] = combined_df['unrealised']
+        combined_df['px_key'] = combined_df['exchange'] + ":" + combined_df['tradingsymbol']
+        combined_df['pxy_ltp'] = combined_df['last_price']
+        combined_df['pxy_close'] = combined_df['close_price']
+        combined_df['pxy_qty'] = combined_df['quantity']
+        combined_df['pxy_rqty'] = combined_df['quantity'] + combined_df['day_sell_quantity']
+        combined_df['pxy_avg'] = combined_df.get('average_price', 0)
+        combined_df['pxy_invst'] = (combined_df['qty'] * combined_df['avg']).round(0).astype(int)
+        combined_df['pxy_value'] = combined_df['qty'] * combined_df['ltp']
+        combined_df['pxy_pnl'] = combined_df['unrealised']
         combined_df.to_csv('pxycombined.csv', index=False)
         return combined_df
     except Exception as e:
