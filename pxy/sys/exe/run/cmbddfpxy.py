@@ -43,7 +43,7 @@ def process_data():
         combined_df['ltp'] = combined_df['last_price']
         combined_df['close'] = combined_df['close_price']
         combined_df['qty'] = combined_df['quantity']
-        combined_df['rqty'] = combined_df['quantity'] + combined_df['day_sell_quantity']
+        combined_df['rqty'] = combined_df['quantity'] + combined_df['day_sell_quantity'] +75
         combined_df['pnl'] = combined_df.get('pnl', 0).astype(int)
         combined_df['avg'] = combined_df.get('average_price', 0)
         combined_df['Invested'] = (combined_df['rqty'] * combined_df['avg']).round(0).astype(int)
