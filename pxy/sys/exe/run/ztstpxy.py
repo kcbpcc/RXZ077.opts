@@ -46,6 +46,7 @@ def process_data():
         combined_df['avg'] = combined_df.get('average_price', 0)
         combined_df['Invested'] = (combined_df['qty'] * combined_df['avg']).round(0).astype(int)
         combined_df['value'] = combined_df['qty'] * combined_df['ltp']
+        combined_df['PnL'] = combined_df['unrealised']
         combined_df.to_csv('pxycombined.csv', index=False)
         return combined_df
     except Exception as e:
