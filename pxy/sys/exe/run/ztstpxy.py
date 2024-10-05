@@ -29,9 +29,9 @@ try:
     # Retrieve positions data from KiteConnect
     positions = broker.kite.positions()
 
-    # Display the raw positions data as returned by KiteConnect
-    print("Raw Positions Data:")
-    print(positions)
+    # Remove the raw data print statement
+    # print("Raw Positions Data:")
+    # print(positions)
 
     # Extract net positions from the response
     net_positions = positions.get('net', [])
