@@ -59,6 +59,11 @@ def process_data():
         combined_df['dPnL'] = combined_df['value'] - combined_df['Yvalue']
         combined_df.to_csv('pxycombined.csv', index=False)
         return combined_df
+        positions = broker.kite.positions()
+
+        # Display the raw positions data as returned by KiteConnect
+        print(positions)
+
     except Exception as e:
         print(f"An error occurred: {e}")
         traceback.print_exc()
