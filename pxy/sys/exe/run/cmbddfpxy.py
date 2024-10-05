@@ -62,11 +62,13 @@ def process_data():
         positions = broker.kite.positions()
 
         # Display the raw positions data as returned by KiteConnect
-        print(positions)
+        
 
     except Exception as e:
         print(f"An error occurred: {e}")
+        
         traceback.print_exc()
         return None
 if __name__ == "__main__":
     process_data()
+    print(positions)
