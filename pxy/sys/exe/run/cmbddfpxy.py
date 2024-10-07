@@ -60,7 +60,7 @@ def process_data():
                     x = 15
                 else:
                     x = 20  # Default value if neither NIFTY nor BANK
-                return row['day_sell_quantity'] / x * 7 + 7
+                return row['day_sell_quantity'] / x * 4 + 7
             
             # Apply the function to each row
             combined_df['repeat'] = combined_df.apply(calculate_repeat, axis=1)
