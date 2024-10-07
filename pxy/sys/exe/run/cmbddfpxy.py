@@ -30,7 +30,6 @@ finally:
     if sys.stdout != sys.__stdout__:
         sys.stdout.close()
         sys.stdout = sys.__stdout__
-
 def process_data():
     try:
         positions_response = broker.kite.positions().get('net', [])
@@ -48,10 +47,8 @@ def process_data():
         combined_df['Invested'] = (combined_df['qty'] * combined_df['avg']).round(0).astype(int)
         combined_df['value'] = combined_df['qty'] * combined_df['ltp']
         # Ensure these columns exist or handle missing columns gracefully
-        
         if 'day_sell_price' in combined_df.columns and 'day_sell_quantity' in combined_df.columns:
             combined_df['booked'] = (combined_df['day_sell_price'] - combined_df['average_price']) * combined_df['day_sell_quantity']
-            
             # Set 'X' dynamically based on key starting with NIFTY or BANK
             def calculate_repeat(row):
                 if row['tradingsymbol'].startswith('NIFTY'):
@@ -61,14 +58,11 @@ def process_data():
                 else:
                     x = 20  # Default value if neither NIFTY nor BANK
                 return row['day_sell_quantity'] / x * 4 + 7
-            
             # Apply the function to each row
             combined_df['repeat'] = combined_df.apply(calculate_repeat, axis=1)
-        
         else:
             combined_df['booked'] = 0  # Handle missing data case
             combined_df['repeat'] = 7
-
         combined_df['PnL'] = (combined_df['unrealised'] - combined_df['booked']).round(2).astype(int)
         combined_df['PL%'] = round((combined_df['PnL'] / combined_df['Invested'] * 100), 2)
         combined_df['Yvalue'] = combined_df['qty'] * combined_df['close']
