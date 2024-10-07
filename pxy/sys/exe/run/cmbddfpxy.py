@@ -50,8 +50,12 @@ def process_data():
         # Ensure these columns exist or handle missing columns gracefully
         if 'day_sell_price' in combined_df.columns and 'day_sell_quantity' in combined_df.columns:
             combined_df['booked'] = (combined_df['day_sell_price'] - combined_df['average_price']) * combined_df['day_sell_quantity']
+            
+            # Set 'repeat' to 7 + (day_sell_quantity * 7)
+            combined_df['repeat'] = combined_df['day_sell_quantity'] * 7 + 7
         else:
             combined_df['booked'] = 0  # Handle missing data case
+            combined_df['repeat'] = 7
         combined_df['PnL'] = (combined_df['unrealised'] - combined_df['booked']).round(2).astype(int)
         combined_df['PL%'] = round((combined_df['PnL'] / combined_df['Invested'] * 100), 2)
         combined_df['Yvalue'] = combined_df['qty'] * combined_df['close']
