@@ -171,39 +171,39 @@ def compute_depth(row):
             if bcedepth > 1:
                 return max(3.9, (row['repeat']- bcedepth))
             elif bpedepth > 1:
-                return 34
+                return row['repeat']
             else:
-                return 35
+                return row['repeat']
 
         elif row['key'].endswith("PE") and row['key'].startswith("BANK"):
             if bpedepth > 1:
                 return max(3.9, (row['repeat']- bpedepth))
             elif bcedepth > 1:
-                return 34
+                return row['repeat']
             else:
-                return 35
+                return row['repeat']
 
         elif row['key'].endswith("CE") and row['key'].startswith("NIFTY"):
             if ncedepth > 1:
                 return max(3.9, (row['repeat']- ncedepth))
             elif npedepth > 1:
-                return 34
+                return row['repeat']
             else:
-                return 34
+                return row['repeat']
 
         elif row['key'].endswith("PE") and row['key'].startswith("NIFTY"):
             if npedepth > 1:
                 return max(3.9, (row['repeat']- npedepth))
             elif ncedepth > 1:
-                return 34
+                return row['repeat']
             else:
-                return 34
-
+                return row['repeat']
         else:
-            return 34
+            return row['repeat']
+          
     except Exception as e:
         # Optionally log the exception e here
-        return 34
+        return row['repeat']
 
 
 exe_opt_df['tgtoptsmadepth'] = exe_opt_df.apply(compute_depth, axis=1)
