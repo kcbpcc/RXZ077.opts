@@ -59,7 +59,7 @@ def process_data():
                 elif row['tradingsymbol'].startswith('BANK'):
                     x = 15
                 else:
-                    x = 1  # Default value if neither NIFTY nor BANK
+                    x = 20  # Default value if neither NIFTY nor BANK
                 return row['day_sell_quantity'] / x * 7 + 7
             
             # Apply the function to each row
