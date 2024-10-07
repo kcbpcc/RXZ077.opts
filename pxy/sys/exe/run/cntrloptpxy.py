@@ -241,6 +241,7 @@ print_df['MN'] = np.where(
 print_df = print_df[['MN', 'strike', 'Invested', 'qty', 'PL%', 'm2m', 'PnL', 'CP', 'group','tgtoptsmadepth']]
 filtered_data = print_df.query('qty > 0')[['MN', 'strike', 'CP', 'qty','tgtoptsmadepth', 'PL%', 'PnL']]
 filtered_data['PL%'] = filtered_data['PL%'].astype(int)
+filtered_data['tgtoptsmadepth'] = filtered_data['tgtoptsmadepth'].astype(int)
 print("━" * 42)
 if filtered_data.empty:
     print(f"{GREY}Still fishing🔎🎣, nothing surfaced yet.🐟{RESET}")
