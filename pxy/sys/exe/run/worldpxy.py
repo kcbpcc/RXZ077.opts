@@ -1,4 +1,4 @@
-import yfinance as yf
+import yfinance as yf 
 from rich.console import Console
 import warnings
 
@@ -28,9 +28,8 @@ exchanges = {
     "^FTSE": {"name": "UK", "weight": 0.20},
     "^GDAXI": {"name": "DE", "weight": 0.15},
     "^FCHI": {"name": "FR", "weight": 0.15},
-    "^NSEBANK": {"name": "BK", "weight": 0.125},
-    "^NSEI": {"name": "NF", "weight": 0.125},
-    "NIFTY24U.NS": {"name": "N24", "weight": 0.10}  # Added NIFTY24U.NS
+    "^NSEBANK": {"name": "BANKNFT", "weight": 0.125},
+    "^NSEI": {"name": "NIFTY", "weight": 0.125}
 }
 
 # Create a console object for rich text output
@@ -43,29 +42,25 @@ closing_prices_yesterday = {}
 for exchange, name_weight in exchanges.items():
     ticker = yf.Ticker(exchange)
     hist_data = ticker.history(period="5d")
-    
+
     # Check if enough data is available
-    if len(hist_data) >= 2:
+    if not hist_data.empty and len(hist_data) >= 2:
         closing_prices_today[name_weight['name']] = hist_data['Close'][-1]
         closing_prices_yesterday[name_weight['name']] = hist_data['Close'][-2]
-    elif exchange == "NIFTY24U.NS":
-        # Special case for NIFTY24U.NS
-        closing_prices_today[name_weight['name']] = hist_data['Close'].iloc[-1]
+    else:
+        # Log an error message for the ticker
+        console.print(f"[red]Error: No data found for {exchange}. It may be delisted or unavailable.[/red]")
 
 # Function to create formatted entry
 def create_entry(name, price_today, price_yesterday=None):
-    if name == "N24":  # Special case for NIFTY24U.NS
-        rounded_price = round(price_today / 10) * 10
-        return f"{int(rounded_price)}✍️"
+    if price_yesterday is not None:
+        percentage_change = ((price_today - price_yesterday) / price_yesterday) * 100
+        percentage_change_str = f"+{percentage_change:.1f}" if percentage_change > 0 else f"{percentage_change:.1f}"
+        entry = f"{name}{percentage_change_str}".rjust(6)
+        sentiment_style = "green" if percentage_change > 0 else "red"
+        return f"[{sentiment_style}]{entry}[/{sentiment_style}]"
     else:
-        if price_yesterday is not None:
-            percentage_change = ((price_today - price_yesterday) / price_yesterday) * 100
-            percentage_change_str = f"+{percentage_change:.1f}" if percentage_change > 0 else f"{percentage_change:.1f}"
-            entry = f"{name}{percentage_change_str}".rjust(6)
-            sentiment_style = "green" if percentage_change > 0 else "red"
-            return f"[{sentiment_style}]{entry}[/{sentiment_style}]"
-        else:
-            return None
+        return None
 
 # Prepare index information strings
 first_line = ""
@@ -88,5 +83,4 @@ for name, price_today in closing_prices_today.items():
 if first_line:
     console.print(first_line.rstrip('|') + "|")
 if second_line:
-    console.print(second_line.rstrip('|') )
-
+    console.print(second_line.rstrip('|'))
