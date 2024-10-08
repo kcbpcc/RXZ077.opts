@@ -29,7 +29,7 @@ ndpt = ncedepth + npedepth - 1
 bdpt = bcedepth + bpedepth - 1
 
 
-column_width = 28
+column_width = 29
 left_aligned_format = "{:<" + str(column_width) + "}"
 right_aligned_format = "{:>" + str(column_width) + "}"
 output_lines = []
