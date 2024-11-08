@@ -166,7 +166,7 @@ while True:
     if bmktpxy in ['Buy', 'Sell']:
         importlib.reload(sys.modules.get('mktpxy', None))
         print("━" * 42)
-        subprocess.run(['python3', 'buyboptpxy.pyc']) if peak != 'PEAKSTART' else None
+        #subprocess.run(['python3', 'buyboptpxy.pyc']) if peak != 'PEAKSTART' else None
     else:
         print("━" * 42)
         print(f"{GREY}🚫 Not Buying BANKS opts, as it is {(GREEN if bmktpxy == 'Bull' else RED)}{bmktpxy}{GREY} ✋{RESET}")
@@ -174,7 +174,7 @@ while True:
     if mktpxy in ['Buy', 'Sell']:
         importlib.reload(sys.modules.get('mktpxy', None))
         print("━" * 42)
-        subprocess.run(['python3', 'buynoptpxy.pyc']) if peak != 'PEAKSTART' else None
+        #subprocess.run(['python3', 'buynoptpxy.pyc']) if peak != 'PEAKSTART' else None
     else:
         print("━" * 42)
         print(f"{GREY}🚫 Not Buying NIFTY opts, as it is {(GREEN if mktpxy == 'Bull' else RED)}{mktpxy}{GREY} ✋{RESET}")
